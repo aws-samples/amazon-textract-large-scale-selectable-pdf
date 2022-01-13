@@ -10,6 +10,7 @@ To deploy this stack, you need:
 * An AWS account
 * Python 3.6 or higher
 * Node.js v10 or higher
+* zip
 * NPM
 * Java 11 or higher (it should work with previous version of Java. not tested)
     * Java Runtime Environment (JRE)

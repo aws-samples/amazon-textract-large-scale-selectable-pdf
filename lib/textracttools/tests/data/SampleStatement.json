@@ -1,0 +1,1932 @@
+{
+    "Titles": [
+        "Date",
+        "Description",
+        "Ref.",
+        "Withdrawals",
+        "Deposits",
+        "Balance"
+    ],
+    "Pages": [
+        {
+            "Table": "334f4be6-f2b8-4fdf-9610-db50a788e9bf",
+            "PageNumber": 1,
+            "Rows": [
+                {
+                    "Row": "1",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-08",
+                            "Confidence": 82.15902789162229,
+                            "WordConfidence": [
+                                82.15902789162229
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Previous balance",
+                            "Confidence": 79.14316273390122,
+                            "WordConfidence": [
+                                79.14316273390122
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 73.16769205378539,
+                            "WordConfidence": [
+                                73.16769205378539
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 77.20335838538658,
+                            "WordConfidence": [
+                                77.20335838538658
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 73.58098923302386,
+                            "WordConfidence": [
+                                73.58098923302386
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "0.55",
+                            "Confidence": 80.56441833312218,
+                            "WordConfidence": [
+                                80.56441833312218
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "2",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-14",
+                            "Confidence": 78.42699043480937,
+                            "WordConfidence": [
+                                78.42699043480937
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Payroll Deposit - HOTEL",
+                            "Confidence": 96.07712611816228,
+                            "WordConfidence": [
+                                96.07712611816228
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 53.80111851270144,
+                            "WordConfidence": [
+                                53.80111851270144
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 68.8422804711144,
+                            "WordConfidence": [
+                                68.8422804711144
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "694.8",
+                            "Confidence": 68.19653976993939,
+                            "WordConfidence": [
+                                68.19653976993939
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "695.36",
+                            "Confidence": 93.83031843026887,
+                            "WordConfidence": [
+                                93.83031843026887
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "3",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-14",
+                            "Confidence": 75.41832699870454,
+                            "WordConfidence": [
+                                75.41832699870454
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Web Bill Payment - MASTERCARD",
+                            "Confidence": 58.41156130188392,
+                            "WordConfidence": [
+                                58.41156130188392
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "9685",
+                            "Confidence": 78.52379586545271,
+                            "WordConfidence": [
+                                78.52379586545271
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "200.00",
+                            "Confidence": 86.68427887493556,
+                            "WordConfidence": [
+                                86.68427887493556
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 93.46302453208733,
+                            "WordConfidence": [
+                                93.46302453208733
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "495.36",
+                            "Confidence": 67.51097372958822,
+                            "WordConfidence": [
+                                67.51097372958822
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "4",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-16",
+                            "Confidence": 79.9645315657324,
+                            "WordConfidence": [
+                                79.9645315657324
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "ATM Withdrawal - INTERAC",
+                            "Confidence": 64.00028655857608,
+                            "WordConfidence": [
+                                64.00028655857608
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "3990",
+                            "Confidence": 63.40100043193423,
+                            "WordConfidence": [
+                                63.40100043193423
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "21.25",
+                            "Confidence": 71.97859821093617,
+                            "WordConfidence": [
+                                71.97859821093617
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 61.68990964651178,
+                            "WordConfidence": [
+                                61.68990964651178
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "474.11",
+                            "Confidence": 68.79326653801158,
+                            "WordConfidence": [
+                                68.79326653801158
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "5",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-16",
+                            "Confidence": 71.1876717758816,
+                            "WordConfidence": [
+                                71.1876717758816
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Fees - Interac",
+                            "Confidence": 62.273570123290206,
+                            "WordConfidence": [
+                                62.273570123290206
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 61.7471341490815,
+                            "WordConfidence": [
+                                61.7471341490815
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "1.50",
+                            "Confidence": 63.89613925653859,
+                            "WordConfidence": [
+                                63.89613925653859
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 52.28889466675337,
+                            "WordConfidence": [
+                                52.28889466675337
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "472.61",
+                            "Confidence": 97.48995849217962,
+                            "WordConfidence": [
+                                97.48995849217962
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "6",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-20",
+                            "Confidence": 90.55832599351149,
+                            "WordConfidence": [
+                                90.55832599351149
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Interac Purchase - ELECTRONICS",
+                            "Confidence": 95.19263349417706,
+                            "WordConfidence": [
+                                95.19263349417706
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "1975",
+                            "Confidence": 78.1544937758691,
+                            "WordConfidence": [
+                                78.1544937758691
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "2.99",
+                            "Confidence": 60.943736246507115,
+                            "WordConfidence": [
+                                60.943736246507115
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 60.440230525274934,
+                            "WordConfidence": [
+                                60.440230525274934
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "469.62",
+                            "Confidence": 61.49071150298106,
+                            "WordConfidence": [
+                                61.49071150298106
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "7",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-21",
+                            "Confidence": 58.192140003660185,
+                            "WordConfidence": [
+                                58.192140003660185
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Web Bill Payment - AMEX",
+                            "Confidence": 69.24430073555226,
+                            "WordConfidence": [
+                                69.24430073555226
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "3314",
+                            "Confidence": 50.52732893402222,
+                            "WordConfidence": [
+                                50.52732893402222
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "300.00",
+                            "Confidence": 84.1271116692055,
+                            "WordConfidence": [
+                                84.1271116692055
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 65.87231443753333,
+                            "WordConfidence": [
+                                65.87231443753333
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "169.62",
+                            "Confidence": 59.12328218427423,
+                            "WordConfidence": [
+                                59.12328218427423
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "8",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-22",
+                            "Confidence": 87.45190453458186,
+                            "WordConfidence": [
+                                87.45190453458186
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "ATM Withdrawal - FIRST BANK",
+                            "Confidence": 53.69139988965807,
+                            "WordConfidence": [
+                                53.69139988965807
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "0064",
+                            "Confidence": 91.06000684546308,
+                            "WordConfidence": [
+                                91.06000684546308
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "100.00",
+                            "Confidence": 51.36735950435598,
+                            "WordConfidence": [
+                                51.36735950435598
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 62.9849729711947,
+                            "WordConfidence": [
+                                62.9849729711947
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "69.62",
+                            "Confidence": 77.2398178281386,
+                            "WordConfidence": [
+                                77.2398178281386
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "9",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-23",
+                            "Confidence": 59.97575497693862,
+                            "WordConfidence": [
+                                59.97575497693862
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Interarc Purchase - SUPERMARKET",
+                            "Confidence": 55.03929869990616,
+                            "WordConfidence": [
+                                55.03929869990616
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "1559",
+                            "Confidence": 92.52324519651523,
+                            "WordConfidence": [
+                                92.52324519651523
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "29.08",
+                            "Confidence": 99.22943231220871,
+                            "WordConfidence": [
+                                99.22943231220871
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 88.52258987243219,
+                            "WordConfidence": [
+                                88.52258987243219
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "40.54",
+                            "Confidence": 98.37154153785589,
+                            "WordConfidence": [
+                                98.37154153785589
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "10",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-24",
+                            "Confidence": 96.23904765711252,
+                            "WordConfidence": [
+                                96.23904765711252
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Interac Refund - ELECTRONICS",
+                            "Confidence": 90.98691229253646,
+                            "WordConfidence": [
+                                90.98691229253646
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "1975",
+                            "Confidence": 71.98367889616286,
+                            "WordConfidence": [
+                                71.98367889616286
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 83.06823185287453,
+                            "WordConfidence": [
+                                83.06823185287453
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "2.99",
+                            "Confidence": 70.72100465934591,
+                            "WordConfidence": [
+                                70.72100465934591
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "43.53",
+                            "Confidence": 94.11466165089655,
+                            "WordConfidence": [
+                                94.11466165089655
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "11",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-27",
+                            "Confidence": 88.16352576059145,
+                            "WordConfidence": [
+                                88.16352576059145
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Telephone Bill Payment -VIISA",
+                            "Confidence": 53.00666776495359,
+                            "WordConfidence": [
+                                53.00666776495359
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "2475",
+                            "Confidence": 98.96413165485893,
+                            "WordConfidence": [
+                                98.96413165485893
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "6.77",
+                            "Confidence": 81.26988845238138,
+                            "WordConfidence": [
+                                81.26988845238138
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 98.88043850149384,
+                            "WordConfidence": [
+                                98.88043850149384
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "36.76",
+                            "Confidence": 99.684075239701,
+                            "WordConfidence": [
+                                99.684075239701
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "12",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-28",
+                            "Confidence": 57.83405763866662,
+                            "WordConfidence": [
+                                57.83405763866662
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Payroll Deposit - HOTEL",
+                            "Confidence": 85.42732894444742,
+                            "WordConfidence": [
+                                85.42732894444742
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 71.03746816036096,
+                            "WordConfidence": [
+                                71.03746816036096
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 86.8178714448465,
+                            "WordConfidence": [
+                                86.8178714448465
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "694.81",
+                            "Confidence": 64.95876159331567,
+                            "WordConfidence": [
+                                64.95876159331567
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "731.57",
+                            "Confidence": 89.86057061341803,
+                            "WordConfidence": [
+                                89.86057061341803
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "13",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-30",
+                            "Confidence": 55.04115388781602,
+                            "WordConfidence": [
+                                55.04115388781602
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Web Funds Transfer - From SAVINGS",
+                            "Confidence": 88.91447021435204,
+                            "WordConfidence": [
+                                88.91447021435204
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "2620",
+                            "Confidence": 74.24295658598612,
+                            "WordConfidence": [
+                                74.24295658598612
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 94.2300946973605,
+                            "WordConfidence": [
+                                94.2300946973605
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "50.00",
+                            "Confidence": 76.53790856627728,
+                            "WordConfidence": [
+                                76.53790856627728
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "781.57",
+                            "Confidence": 73.89131097762886,
+                            "WordConfidence": [
+                                73.89131097762886
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "14",
+                    "Cells": [
+                        {
+                            "Text": "2003-11-03",
+                            "Confidence": 87.12224128338312,
+                            "WordConfidence": [
+                                87.12224128338312
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Pre-Auth; Payment - 1NSURANCE",
+                            "Confidence": 84.12129149175063,
+                            "WordConfidence": [
+                                84.12129149175063
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 84.66347242667538,
+                            "WordConfidence": [
+                                84.66347242667538
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "33.55",
+                            "Confidence": 52.831265986446454,
+                            "WordConfidence": [
+                                52.831265986446454
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 50.85460811046624,
+                            "WordConfidence": [
+                                50.85460811046624
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "748.02",
+                            "Confidence": 66.23306280344754,
+                            "WordConfidence": [
+                                66.23306280344754
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "15",
+                    "Cells": [
+                        {
+                            "Text": "2003-11-03",
+                            "Confidence": 73.17011003074653,
+                            "WordConfidence": [
+                                73.17011003074653
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Cheque No. - 409",
+                            "Confidence": 51.17663420183593,
+                            "WordConfidence": [
+                                51.17663420183593
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 92.56974897797602,
+                            "WordConfidence": [
+                                92.56974897797602
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "100.00",
+                            "Confidence": 72.14833715416103,
+                            "WordConfidence": [
+                                72.14833715416103
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 99.41950787455342,
+                            "WordConfidence": [
+                                99.41950787455342
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "648.02",
+                            "Confidence": 90.0256279896393,
+                            "WordConfidence": [
+                                90.0256279896393
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "16",
+                    "Cells": [
+                        {
+                            "Text": "2003-11-06",
+                            "Confidence": 85.3075357352262,
+                            "WordConfidence": [
+                                85.3075357352262
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Mortgage Payment",
+                            "Confidence": 75.74414322485065,
+                            "WordConfidence": [
+                                75.74414322485065
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 93.35733037205941,
+                            "WordConfidence": [
+                                93.35733037205941
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "710.49",
+                            "Confidence": 54.80628544535137,
+                            "WordConfidence": [
+                                54.80628544535137
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 54.877726966104085,
+                            "WordConfidence": [
+                                54.877726966104085
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "-62.47",
+                            "Confidence": 63.54866890044846,
+                            "WordConfidence": [
+                                63.54866890044846
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "17",
+                    "Cells": [
+                        {
+                            "Text": "2003-11-07",
+                            "Confidence": 89.2230505565469,
+                            "WordConfidence": [
+                                89.2230505565469
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Fees - Overdraft",
+                            "Confidence": 99.12749567598703,
+                            "WordConfidence": [
+                                99.12749567598703
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 81.10617790842706,
+                            "WordConfidence": [
+                                81.10617790842706
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "5.00",
+                            "Confidence": 93.78389322438957,
+                            "WordConfidence": [
+                                93.78389322438957
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 61.94545100700975,
+                            "WordConfidence": [
+                                61.94545100700975
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "-67.47",
+                            "Confidence": 98.21636341005285,
+                            "WordConfidence": [
+                                98.21636341005285
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "18",
+                    "Cells": [
+                        {
+                            "Text": "2003-11-08",
+                            "Confidence": 68.43592499714767,
+                            "WordConfidence": [
+                                68.43592499714767
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Fees - Monthly",
+                            "Confidence": 73.54343638472538,
+                            "WordConfidence": [
+                                73.54343638472538
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 82.97418202227945,
+                            "WordConfidence": [
+                                82.97418202227945
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "5.00",
+                            "Confidence": 95.88537515806316,
+                            "WordConfidence": [
+                                95.88537515806316
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 73.8080083237376,
+                            "WordConfidence": [
+                                73.8080083237376
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "-72.47",
+                            "Confidence": 54.64560208204708,
+                            "WordConfidence": [
+                                54.64560208204708
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Table": "57f77570-f328-4ec2-9a8a-eac24c0d6b00",
+            "PageNumber": 2,
+            "Rows": [
+                {
+                    "Row": "1",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-08",
+                            "Confidence": 68.35581051060164,
+                            "WordConfidence": [
+                                68.35581051060164
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Previous balance",
+                            "Confidence": 94.2373808297819,
+                            "WordConfidence": [
+                                94.2373808297819
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 70.64278842611274,
+                            "WordConfidence": [
+                                70.64278842611274
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 61.234032238951976,
+                            "WordConfidence": [
+                                61.234032238951976
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 77.87531609310456,
+                            "WordConfidence": [
+                                77.87531609310456
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "0.55",
+                            "Confidence": 60.65727392481231,
+                            "WordConfidence": [
+                                60.65727392481231
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "2",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-14",
+                            "Confidence": 72.63015644867141,
+                            "WordConfidence": [
+                                72.63015644867141
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Payroll Deposit - HOTEL",
+                            "Confidence": 91.04467789655273,
+                            "WordConfidence": [
+                                91.04467789655273
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 68.94402387233072,
+                            "WordConfidence": [
+                                68.94402387233072
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 93.21632238238536,
+                            "WordConfidence": [
+                                93.21632238238536
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "694.8",
+                            "Confidence": 85.43851880822308,
+                            "WordConfidence": [
+                                85.43851880822308
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "695.36",
+                            "Confidence": 83.42483126873967,
+                            "WordConfidence": [
+                                83.42483126873967
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "3",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-14",
+                            "Confidence": 87.5868896137656,
+                            "WordConfidence": [
+                                87.5868896137656
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Web Bill Payment - MASTERCARD",
+                            "Confidence": 58.737852687174986,
+                            "WordConfidence": [
+                                58.737852687174986
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "9685",
+                            "Confidence": 73.11215788974829,
+                            "WordConfidence": [
+                                73.11215788974829
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "200.00",
+                            "Confidence": 94.76289402328715,
+                            "WordConfidence": [
+                                94.76289402328715
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 61.81533064528184,
+                            "WordConfidence": [
+                                61.81533064528184
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "495.36",
+                            "Confidence": 61.86348417991053,
+                            "WordConfidence": [
+                                61.86348417991053
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "4",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-16",
+                            "Confidence": 87.99546342154748,
+                            "WordConfidence": [
+                                87.99546342154748
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "ATM Withdrawal - INTERAC",
+                            "Confidence": 89.19536773299666,
+                            "WordConfidence": [
+                                89.19536773299666
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "3990",
+                            "Confidence": 99.57937424239682,
+                            "WordConfidence": [
+                                99.57937424239682
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "21.25",
+                            "Confidence": 85.15940156265822,
+                            "WordConfidence": [
+                                85.15940156265822
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 99.76168881460947,
+                            "WordConfidence": [
+                                99.76168881460947
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "474.11",
+                            "Confidence": 84.73528738283625,
+                            "WordConfidence": [
+                                84.73528738283625
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "5",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-16",
+                            "Confidence": 92.02705852454295,
+                            "WordConfidence": [
+                                92.02705852454295
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Fees - Interac",
+                            "Confidence": 58.23983841448487,
+                            "WordConfidence": [
+                                58.23983841448487
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 55.5594944134597,
+                            "WordConfidence": [
+                                55.5594944134597
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "1.50",
+                            "Confidence": 61.410725844150235,
+                            "WordConfidence": [
+                                61.410725844150235
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 78.04442465201953,
+                            "WordConfidence": [
+                                78.04442465201953
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "472.61",
+                            "Confidence": 53.548092713383014,
+                            "WordConfidence": [
+                                53.548092713383014
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "6",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-20",
+                            "Confidence": 52.14711555611969,
+                            "WordConfidence": [
+                                52.14711555611969
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Interac Purchase - ELECTRONICS",
+                            "Confidence": 85.57533402004233,
+                            "WordConfidence": [
+                                85.57533402004233
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "1975",
+                            "Confidence": 54.042828476834856,
+                            "WordConfidence": [
+                                54.042828476834856
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "2.99",
+                            "Confidence": 67.02169124556616,
+                            "WordConfidence": [
+                                67.02169124556616
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 61.2358649762547,
+                            "WordConfidence": [
+                                61.2358649762547
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "469.62",
+                            "Confidence": 86.19137092886928,
+                            "WordConfidence": [
+                                86.19137092886928
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "7",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-21",
+                            "Confidence": 80.12632398140775,
+                            "WordConfidence": [
+                                80.12632398140775
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Web Bill Payment - AMEX",
+                            "Confidence": 66.21116366911616,
+                            "WordConfidence": [
+                                66.21116366911616
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "3314",
+                            "Confidence": 57.695222899099996,
+                            "WordConfidence": [
+                                57.695222899099996
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "300.00",
+                            "Confidence": 50.54168592438957,
+                            "WordConfidence": [
+                                50.54168592438957
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 87.30861113325905,
+                            "WordConfidence": [
+                                87.30861113325905
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "169.62",
+                            "Confidence": 57.12250549153685,
+                            "WordConfidence": [
+                                57.12250549153685
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "8",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-22",
+                            "Confidence": 96.47136863316705,
+                            "WordConfidence": [
+                                96.47136863316705
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "ATM Withdrawal - FIRST BANK",
+                            "Confidence": 63.60646664809555,
+                            "WordConfidence": [
+                                63.60646664809555
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "0064",
+                            "Confidence": 93.69387556381653,
+                            "WordConfidence": [
+                                93.69387556381653
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "100.00",
+                            "Confidence": 95.27350338052362,
+                            "WordConfidence": [
+                                95.27350338052362
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 98.1779755077052,
+                            "WordConfidence": [
+                                98.1779755077052
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "69.62",
+                            "Confidence": 84.48236586773893,
+                            "WordConfidence": [
+                                84.48236586773893
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "9",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-23",
+                            "Confidence": 98.17809918959271,
+                            "WordConfidence": [
+                                98.17809918959271
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Interarc Purchase - SUPERMARKET",
+                            "Confidence": 97.4961942466453,
+                            "WordConfidence": [
+                                97.4961942466453
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "1559",
+                            "Confidence": 94.71974911370988,
+                            "WordConfidence": [
+                                94.71974911370988
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "29.08",
+                            "Confidence": 96.28132073767863,
+                            "WordConfidence": [
+                                96.28132073767863
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 82.7754242036606,
+                            "WordConfidence": [
+                                82.7754242036606
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "40.54",
+                            "Confidence": 62.09377728755928,
+                            "WordConfidence": [
+                                62.09377728755928
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "10",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-24",
+                            "Confidence": 60.90035746379927,
+                            "WordConfidence": [
+                                60.90035746379927
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Interac Refund - ELECTRONICS",
+                            "Confidence": 87.07656177791543,
+                            "WordConfidence": [
+                                87.07656177791543
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "1975",
+                            "Confidence": 94.42119582854426,
+                            "WordConfidence": [
+                                94.42119582854426
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 74.75429103324433,
+                            "WordConfidence": [
+                                74.75429103324433
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "2.99",
+                            "Confidence": 62.72864716789449,
+                            "WordConfidence": [
+                                62.72864716789449
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "43.53",
+                            "Confidence": 54.12564943159706,
+                            "WordConfidence": [
+                                54.12564943159706
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "11",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-27",
+                            "Confidence": 66.11760919709988,
+                            "WordConfidence": [
+                                66.11760919709988
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Telephone Bill Payment -VIISA",
+                            "Confidence": 62.00568584755051,
+                            "WordConfidence": [
+                                62.00568584755051
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "2475",
+                            "Confidence": 77.54323033355604,
+                            "WordConfidence": [
+                                77.54323033355604
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "6.77",
+                            "Confidence": 71.47223157445012,
+                            "WordConfidence": [
+                                71.47223157445012
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 71.75375380411724,
+                            "WordConfidence": [
+                                71.75375380411724
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "36.76",
+                            "Confidence": 90.8248281386349,
+                            "WordConfidence": [
+                                90.8248281386349
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "12",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-28",
+                            "Confidence": 71.7796332464227,
+                            "WordConfidence": [
+                                71.7796332464227
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Payroll Deposit - HOTEL",
+                            "Confidence": 89.40599528652038,
+                            "WordConfidence": [
+                                89.40599528652038
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 74.67703040718003,
+                            "WordConfidence": [
+                                74.67703040718003
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 76.36722383464515,
+                            "WordConfidence": [
+                                76.36722383464515
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "694.81",
+                            "Confidence": 95.07669107985379,
+                            "WordConfidence": [
+                                95.07669107985379
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "731.57",
+                            "Confidence": 84.63668773690998,
+                            "WordConfidence": [
+                                84.63668773690998
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "13",
+                    "Cells": [
+                        {
+                            "Text": "2003-10-30",
+                            "Confidence": 85.64434428527758,
+                            "WordConfidence": [
+                                85.64434428527758
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Web Funds Transfer - From SAVINGS",
+                            "Confidence": 66.50430646232294,
+                            "WordConfidence": [
+                                66.50430646232294
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "2620",
+                            "Confidence": 83.96749311380675,
+                            "WordConfidence": [
+                                83.96749311380675
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 91.57145594469661,
+                            "WordConfidence": [
+                                91.57145594469661
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "50.00",
+                            "Confidence": 56.538142064749714,
+                            "WordConfidence": [
+                                56.538142064749714
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "781.57",
+                            "Confidence": 74.20848664611114,
+                            "WordConfidence": [
+                                74.20848664611114
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "14",
+                    "Cells": [
+                        {
+                            "Text": "2003-11-03",
+                            "Confidence": 59.192707501801074,
+                            "WordConfidence": [
+                                59.192707501801074
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Pre-Auth; Payment - 1NSURANCE",
+                            "Confidence": 50.21135458827435,
+                            "WordConfidence": [
+                                50.21135458827435
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 66.37208676221073,
+                            "WordConfidence": [
+                                66.37208676221073
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "33.55",
+                            "Confidence": 69.41792471727744,
+                            "WordConfidence": [
+                                69.41792471727744
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 60.92826635932804,
+                            "WordConfidence": [
+                                60.92826635932804
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "748.02",
+                            "Confidence": 79.252434363295,
+                            "WordConfidence": [
+                                79.252434363295
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "15",
+                    "Cells": [
+                        {
+                            "Text": "2003-11-03",
+                            "Confidence": 50.160287247699955,
+                            "WordConfidence": [
+                                50.160287247699955
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Cheque No. - 409",
+                            "Confidence": 94.06643068430125,
+                            "WordConfidence": [
+                                94.06643068430125
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 97.41276689783778,
+                            "WordConfidence": [
+                                97.41276689783778
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "100.00",
+                            "Confidence": 74.28884845561475,
+                            "WordConfidence": [
+                                74.28884845561475
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 88.54331116198041,
+                            "WordConfidence": [
+                                88.54331116198041
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "648.02",
+                            "Confidence": 73.44635591011729,
+                            "WordConfidence": [
+                                73.44635591011729
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "16",
+                    "Cells": [
+                        {
+                            "Text": "2003-11-06",
+                            "Confidence": 50.45680267661001,
+                            "WordConfidence": [
+                                50.45680267661001
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Mortgage Payment",
+                            "Confidence": 85.80910674355155,
+                            "WordConfidence": [
+                                85.80910674355155
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 62.233331108923764,
+                            "WordConfidence": [
+                                62.233331108923764
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "710.49",
+                            "Confidence": 66.86852063058457,
+                            "WordConfidence": [
+                                66.86852063058457
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 51.97607040469558,
+                            "WordConfidence": [
+                                51.97607040469558
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "-62.47",
+                            "Confidence": 64.89871355941794,
+                            "WordConfidence": [
+                                64.89871355941794
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "17",
+                    "Cells": [
+                        {
+                            "Text": "2003-11-07",
+                            "Confidence": 93.70977316529277,
+                            "WordConfidence": [
+                                93.70977316529277
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Fees - Overdraft",
+                            "Confidence": 52.19778894150109,
+                            "WordConfidence": [
+                                52.19778894150109
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 63.13424908951032,
+                            "WordConfidence": [
+                                63.13424908951032
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "5.00",
+                            "Confidence": 79.51543133547415,
+                            "WordConfidence": [
+                                79.51543133547415
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 90.99508941542913,
+                            "WordConfidence": [
+                                90.99508941542913
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "-67.47",
+                            "Confidence": 58.79052432049701,
+                            "WordConfidence": [
+                                58.79052432049701
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                },
+                {
+                    "Row": "18",
+                    "Cells": [
+                        {
+                            "Text": "2003-11-08",
+                            "Confidence": 99.22065507444631,
+                            "WordConfidence": [
+                                99.22065507444631
+                            ],
+                            "Column": "1"
+                        },
+                        {
+                            "Text": "Fees - Monthly",
+                            "Confidence": 93.21061133013094,
+                            "WordConfidence": [
+                                93.21061133013094
+                            ],
+                            "Column": "2"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 85.15962966256791,
+                            "WordConfidence": [
+                                85.15962966256791
+                            ],
+                            "Column": "3"
+                        },
+                        {
+                            "Text": "5.00",
+                            "Confidence": 59.430706045719695,
+                            "WordConfidence": [
+                                59.430706045719695
+                            ],
+                            "Column": "4"
+                        },
+                        {
+                            "Text": "",
+                            "Confidence": 60.648549108821584,
+                            "WordConfidence": [
+                                60.648549108821584
+                            ],
+                            "Column": "5"
+                        },
+                        {
+                            "Text": "-72.47",
+                            "Confidence": 95.67099460277328,
+                            "WordConfidence": [
+                                95.67099460277328
+                            ],
+                            "Column": "6"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
