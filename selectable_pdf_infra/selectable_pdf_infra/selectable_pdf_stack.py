@@ -96,6 +96,13 @@ class SelectablePdfStack(core.Stack):
             compatible_runtimes=[aws_lambda.Runtime.PYTHON_3_8],
             description ='contains TextractTools module'
         )
+        pypi_layer = aws_lambda.LayerVersion(
+            self,
+            id='pypimodules',
+            code=aws_lambda.Code.from_asset(self.build_pypi_layer()),
+            compatible_runtimes=[aws_lambda.Runtime.PYTHON_3_8],
+            description ='contains various modules from pypi: PyMuPdf'
+        )
 
         # lambda function starting textract. The lambda is triggered with a S3 PUT 
         # notification
@@ -141,7 +148,7 @@ class SelectablePdfStack(core.Stack):
         # Lambda getting the textract results from S3 and feeding textract output 
         # status to a SQS for future faning
         
-        sqs_visibility_timeout_sec = 2 * 60
+        sqs_visibility_timeout_sec = 10 * 60
         dlq_processed_textracted_queue_sqs = aws_sqs.Queue(self, id='DlqProcessedTextractQueue')
         processed_textracted_queue_sqs = aws_sqs.Queue(
             self,
@@ -189,32 +196,35 @@ class SelectablePdfStack(core.Stack):
 
         # Lambda function turning a scanned PDF (i.e. a PDF where we cannot select 
         # text) into a searchable PDF (i.e. a PDF where we can select text). This function 
-        # recieved message from sqs, therefore its timeout MUST be smaller than the 
+        # received message from sqs, therefore its timeout MUST be smaller than the 
         # visibility timeout of the source SQS, otherwise, cyclic call!!.
         lambda_timeout_sec = sqs_visibility_timeout_sec-1 #second
-        searchable_pdf_lambda = aws_lambda.Function(
+        selectable_pdf_lambda = aws_lambda.Function(
             self,
             id='SelectablePdf',
-            runtime=aws_lambda.Runtime.JAVA_11,
+            runtime=aws_lambda.Runtime.PYTHON_3_8,
             handler='LambdaSqs::handleRequest',
             code=aws_lambda.Code.asset(self.build_selectable_pdf_lib()),
             timeout=core.Duration.seconds(lambda_timeout_sec),
             environment={
+                'DDB_DOCUMENTS_TABLE': ddb_documents_table.table_name,
                 'OUTPUT_BUCKET': processed_bucket.bucket_name,
+                'LOG_LEVEL': 'INFO',
+                'ADD_WORD_BBOX': '0',
+                'SHOW_CHARACTER': '0'
+
             },
             retry_attempts=0,
             memory_size=4048,  # 4GB to get a big CPU with the Lambda. Code is CPU intensive
         )
         # add the required policies to the default role creation with the lambda
-        managed_policies = [
-            'AmazonS3FullAccess',
-        ]
+        managed_policies = ['AmazonS3FullAccess']
         for policy in managed_policies:
-            searchable_pdf_lambda.role.add_managed_policy(
+            selectable_pdf_lambda.role.add_managed_policy(
                 aws_iam.ManagedPolicy.from_aws_managed_policy_name(policy)
             )
         # add the SQS trigger
-        searchable_pdf_lambda.add_event_source(
+        selectable_pdf_lambda.add_event_source(
             source=aws_lambda_event_sources.SqsEventSource(
                 queue=processed_textracted_queue_sqs,
                 batch_size=1,
@@ -275,6 +285,33 @@ class SelectablePdfStack(core.Stack):
         layer_zippath = os.path.join(layerbuilder_dirpath, 'textracttools_py38.zip')
         os.chdir(cwd)
 
+        return layer_zippath
+
+
+    @staticmethod
+    def build_pypi_layer() -> str:
+        '''
+        Build the pypi layer which contains any module which can be installed from pypi.
+
+        Usage
+        -----
+        layer_zipfile = self.build_pypi_layer()
+
+        Arguments
+        ---------
+        None
+
+        Returns
+        -------
+        layer_zippath
+            Path to the layer zipfile.
+        '''
+        cwd = os.path.abspath(os.getcwd())
+        layerbuilder_dirpath = os.path.join(LAMBDA_LAYER_DIRPATH,'pypi_py38')
+        os.chdir(layerbuilder_dirpath)
+        subprocess.run(['./createlayer.sh','3.8'], capture_output=True)
+        layer_zippath = os.path.join(layerbuilder_dirpath, 'pypi_py38.zip')
+        os.chdir(cwd)
         return layer_zippath
 
     

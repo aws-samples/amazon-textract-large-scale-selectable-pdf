@@ -11,7 +11,7 @@ images. a selectable PDF allow text selection. Selectable PDF's can be used in
 several downstream tasks, such as:
 * document search
 * document indexing
-* Machine Leanring tasks, such as:
+* Machine Learning tasks, such as:
     * Natural Language Processing (NLP)
     * NLP annotations
     * Document summarization
@@ -20,13 +20,13 @@ several downstream tasks, such as:
 
 ## Architecture
 
-The figure 1 shows the archecture used by the _large-scale-selectable-pdf_ application. 
+The figure 1 shows the architecture used by the _large-scale-selectable-pdf_ application. 
 The workflow runs as follow:
 1. The user starts by uploading one or several PDF's in the _InputDocument_ Amazon 
    S3 bucket. 
 2. Each document uploaded to S3 will automatically trigger the _Starttextract_ Amazon
    Lambda function. This is where the parallel processing of document starts.
-3. Each _Starttextract_ Lambda function triggers an asychronous Textract job which
+3. Each _Starttextract_ Lambda function triggers an asynchronous Textract job which
    can last from 1 minute to 30 minutes, depending on the size (i.e. number of pages) 
    of the document. Each Textract job will write a message in Amazon SNS when finished.
 4. Each SNS message triggers the Lambda function _ProcessTextract_ which download 
@@ -42,7 +42,7 @@ The Application Logging Layer uses DynamoDB to log the status of each file uploa
 _InputDocuments_ S3 bucket. These logs are stored in the _Documents_ table. The code 
 logs (e.g. the Lambda function logs) are stored in CloudWatch, as usual.
 
-This architecutre can easily be integrated to a more complex document processing 
+This architecture can easily be integrated to a more complex document processing 
 infrastructure,such as the [amazon-textract-serverless-large-scale-document-processing](https://github.com/aws-samples/amazon-textract-serverless-large-scale-document-processing) reference 
 architecture.
 

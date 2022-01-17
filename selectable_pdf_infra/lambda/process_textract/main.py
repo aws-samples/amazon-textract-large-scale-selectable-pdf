@@ -33,7 +33,9 @@ from textracttools import TextractParser, save_json_to_s3, convert_httpheaders_d
 # typing
 from typing import Dict
 
-# prepare the logger. If no LOG_LEVEL env var or wrong LOG_LEVEL env var, fallback 
+# logger
+# ------ 
+#If no LOG_LEVEL env var or wrong LOG_LEVEL env var, fallback 
 # to INFO log level
 log_level = os.getenv('LOG_LEVEL', default='INFO')
 log_level_int = int()
