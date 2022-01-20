@@ -1,6 +1,8 @@
 # load modules
 # ------------
+from constructs import Construct
 from aws_cdk import (
+    Stack,
     aws_iam,
     aws_s3,
     aws_lambda,
@@ -9,7 +11,9 @@ from aws_cdk import (
     aws_sqs,
     aws_sns_subscriptions,
     aws_dynamodb,
-    core
+    RemovalPolicy,
+    Duration,
+    CfnOutput
 )
 
 import os
@@ -28,11 +32,11 @@ LIB_DIRPATH = CURRENT_DIRPATH.parent.parent.joinpath('lib')
 
 # classes
 # -------
-class SelectablePdfStack(core.Stack):
+class SelectablePdfStack(Stack):
 
     def __init__(
         self, 
-        scope: core.Construct, 
+        scope: Construct, 
         construct_id: str,
         log_level: str,
         **kwargs
@@ -46,12 +50,12 @@ class SelectablePdfStack(core.Stack):
         doc_bucket = aws_s3.Bucket(
             self,
             id='InputDocuments',
-            removal_policy=core.RemovalPolicy.DESTROY, #kept if not empty
+            removal_policy=RemovalPolicy.DESTROY, #kept if not empty
         )
         processed_bucket = aws_s3.Bucket(
             self,
             id='ProcessedDocuments',
-            removal_policy=core.RemovalPolicy.DESTROY, #kept if not empty
+            removal_policy=RemovalPolicy.DESTROY, #kept if not empty
         )
 
         # create the DynamoDB tables. We create N tables:
@@ -77,7 +81,7 @@ class SelectablePdfStack(core.Stack):
             self,
             id='SnsPublishRole',
             assumed_by=aws_iam.ServicePrincipal('textract.amazonaws.com'),
-            max_session_duration=core.Duration.seconds(assume_role_timeout),
+            max_session_duration=Duration.seconds(assume_role_timeout),
         )
         sns_publish_role.add_to_policy(
             statement=aws_iam.PolicyStatement(
@@ -112,14 +116,13 @@ class SelectablePdfStack(core.Stack):
             id='StartTextract',
             runtime=aws_lambda.Runtime.PYTHON_3_8,
             handler='main.lambda_handler',
-            code=aws_lambda.Code.asset(os.path.join(LAMBDA_DIRPATH, 'start_textract')),
-            timeout=core.Duration.seconds(lambda_timeout_sec),
+            code=aws_lambda.Code.from_asset(os.path.join(LAMBDA_DIRPATH, 'start_textract')),
+            timeout=Duration.seconds(lambda_timeout_sec),
             environment={
                 'LOG_LEVEL': log_level,
                 'SNS_TOPIC_ARN': textract_job_topic.topic_arn,
                 'SNS_ROLE_ARN': sns_publish_role.role_arn,
                 'DDB_DOCUMENTS_TABLE': ddb_documents_table.table_name,
-                # 'TEXTRACT_BUCKET': processed_bucket.bucket_name
             },
             retry_attempts=0,
             memory_size=128,  #128MB
@@ -153,7 +156,7 @@ class SelectablePdfStack(core.Stack):
         processed_textracted_queue_sqs = aws_sqs.Queue(
             self,
             id='ProcessedTextractQueue',
-            visibility_timeout=core.Duration.seconds(sqs_visibility_timeout_sec),
+            visibility_timeout=Duration.seconds(sqs_visibility_timeout_sec),
             dead_letter_queue=aws_sqs.DeadLetterQueue(
                 max_receive_count=1, 
                 queue=dlq_processed_textracted_queue_sqs
@@ -165,9 +168,9 @@ class SelectablePdfStack(core.Stack):
             id='ProcessTextract',
             runtime=aws_lambda.Runtime.PYTHON_3_8,
             handler='main.lambda_handler',
-            code=aws_lambda.Code.asset(os.path.join(LAMBDA_DIRPATH, 'process_textract')),
+            code=aws_lambda.Code.from_asset(os.path.join(LAMBDA_DIRPATH, 'process_textract')),
             layers=[textract_layer],
-            timeout=core.Duration.seconds(lambda_timeout_sec),
+            timeout=Duration.seconds(lambda_timeout_sec),
             environment={
                 'LOG_LEVEL': log_level,
                 'REGION': self.region,
@@ -203,22 +206,24 @@ class SelectablePdfStack(core.Stack):
             self,
             id='SelectablePdf',
             runtime=aws_lambda.Runtime.PYTHON_3_8,
-            handler='LambdaSqs::handleRequest',
-            code=aws_lambda.Code.asset(self.build_selectable_pdf_lib()),
-            timeout=core.Duration.seconds(lambda_timeout_sec),
+            handler='main.lambda_handler',
+            code=aws_lambda.Code.from_asset(os.path.join(LAMBDA_DIRPATH, 'selectable_pdf')),
+            layers=[textract_layer, pypi_layer],
+            timeout=Duration.seconds(lambda_timeout_sec),
             environment={
                 'DDB_DOCUMENTS_TABLE': ddb_documents_table.table_name,
                 'OUTPUT_BUCKET': processed_bucket.bucket_name,
                 'LOG_LEVEL': 'INFO',
                 'ADD_WORD_BBOX': '0',
-                'SHOW_CHARACTER': '0'
+                'SHOW_CHARACTER': '0',
+                'PDF_IMAGE_DPI': '200',
 
             },
             retry_attempts=0,
             memory_size=4048,  # 4GB to get a big CPU with the Lambda. Code is CPU intensive
         )
         # add the required policies to the default role creation with the lambda
-        managed_policies = ['AmazonS3FullAccess']
+        managed_policies = ['AmazonS3FullAccess','AmazonDynamoDBFullAccess']
         for policy in managed_policies:
             selectable_pdf_lambda.role.add_managed_policy(
                 aws_iam.ManagedPolicy.from_aws_managed_policy_name(policy)
@@ -232,21 +237,21 @@ class SelectablePdfStack(core.Stack):
         )
 
         # Outputs
-        core.CfnOutput(
+        CfnOutput(
             self,
             id='DocumentInputBucket',
             value=doc_bucket.bucket_name,
             description='Bucket where to load the PDFs',
             export_name='DocumentInputBucket',
         )
-        core.CfnOutput(
+        CfnOutput(
             self,
             id='DocumentOutputBucket',
             value=processed_bucket.bucket_name,
             description='Bucket where the processed PDFs and the intermediary files are stored',
             export_name='DocumentOutputBucket',
         )
-        core.CfnOutput(
+        CfnOutput(
             self,
             id='ProcessingLogsDynamoDB',
             value=ddb_documents_table.table_name,

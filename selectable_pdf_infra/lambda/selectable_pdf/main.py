@@ -71,76 +71,83 @@ def lambda_handler(event, context):
     ddb_ress = boto3.resource('dynamodb')
     ddb_doc_table = ddb_ress.Table(args['ddb_documents_table'])
 
-    document_id = args['document_id']
-    document_name = args['document_name']
-    logger.info('document id: {}'.format(document_id))
-    logger.info('document name: {}'.format(document_name))
-    logger.info(f"document bucket: {args['original_document_s3']['bucket']}")
-    logger.info(f"document key: {args['original_document_s3']['key']}")
+    returns = list()
+    for rec in args['records']:
+        document_id = rec['document_id']
+        document_name = rec['document_name']
+        logger.info('document id: {}'.format(document_id))
+        logger.info('document name: {}'.format(document_name))
+        logger.info(f"document bucket: {rec['original_document_s3']['bucket']}")
+        logger.info(f"document key: {rec['original_document_s3']['key']}")
 
-    # store info about starting creating the selectable PDF document
-    try:
-        ddb_doc_table.update_item(
-            Key={
-                'document_id': document_id,  # HASH key
-                'document_name': document_name  # RANGE key
-            },
-            UpdateExpression='SET selectable_pdf=:att1',  # This will set a new attribute
-            ExpressionAttributeValues={
-                ':att1': {
-                    'datetime': datetime.datetime.now.strftime('%Y-%m-%dT%H:%M:%S') + '+00:00'
+        # store info about starting creating the selectable PDF document
+        try:
+            ddb_doc_table.update_item(
+                Key={
+                    'document_id': document_id,  # HASH key
+                    'document_name': document_name  # RANGE key
+                },
+                UpdateExpression='SET selectable_pdf=:att1',  # This will set a new attribute
+                ExpressionAttributeValues={
+                    ':att1': {
+                        'datetime': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S') + '+00:00'
+                    }
                 }
-            }
+            )
+        except Exception as ex:
+            logger.error(f'Cannot update item in DynamoDB table {args["ddb_documents_table"]}')
+            raise ex
+
+        # process the PDF
+        pdf_doc = load_pdf_from_s3(rec['original_document_s3']['bucket'], rec['original_document_s3']['key'])
+        textract_blocks = load_json_from_s3(rec['textract_output_s3']['bucket'], rec['textract_output_s3']['key'])
+        textract_blocks = textract_blocks['Blocks']
+        logger.info(f'nb blocks: {len(textract_blocks)}')
+        num_word_blocks = 0
+        for blk in textract_blocks:
+            if blk['BlockType']=='WORD':
+                num_word_blocks += 1
+        logger.info(f'number of WORD blocks {num_word_blocks}')
+
+        selectable_pdf_doc = make_pdf_doc_searchable(
+            pdf_doc=pdf_doc,
+            textract_blocks=textract_blocks,
+            add_word_bbox=args['add_word_bbox'],
+            show_selectable_char=args['show_character'],
+            pdf_image_dpi=args['pdf_image_dpi'],
+            verbose=True
         )
-    except Exception as ex:
-        logger.error(f'Cannot update item in DynamoDB table {args["ddb_documents_table"]}')
-        raise ex
+        output_key = document_name
+        save_pdf_to_s3(selectable_pdf_doc, args['output_bucket'], output_key)
 
-    # process the PDF
-    pdf_doc = load_pdf_from_s3(args['original_document_s3']['bucket'], args['original_document_s3']['key'])
-    textract_blocks = load_json_from_s3(args['textract_output_s3']['bucket'], args['textract_output_s3']['key'])
-    logger.info(f'nb blocks: {len(textract_blocks)}')
-    num_word_blocks = 0
-    for blk in textract_blocks:
-        if blk['BlockType']=='WORD':
-            num_word_blocks += 1
-    logger.info(f'number of WORD blocks {num_word_blocks}')
-
-    selectable_pdf_doc = make_pdf_doc_searchable(
-        pdf_doc=pdf_doc,
-        textract_blocks=textract_blocks,
-        add_word_bbox=args['add_word_bbox'],
-        show_selectable_char=args['show_character'],
-        verbose=True
-    )
-    output_key = document_name
-    save_pdf_to_s3(selectable_pdf_doc, args['output_bucket'], output_key)
-
-    # store info about ending the selectable PDF document creation
-    try:
-        ddb_doc_table.update_item(
-            Key={
-                'document_id': document_id,  # HASH key
-                'document_name': document_name  # RANGE key
-            },
-            UpdateExpression='SET selectable_pdf=:att1',  # This will set a new attribute
-            ExpressionAttributeValues={
-                ':att1': {
-                    'datetime': datetime.datetime.now.strftime('%Y-%m-%dT%H:%M:%S') + '+00:00'
+        # store info about ending the selectable PDF document creation
+        try:
+            ddb_doc_table.update_item(
+                Key={
+                    'document_id': document_id,  # HASH key
+                    'document_name': document_name  # RANGE key
+                },
+                UpdateExpression='SET selectable_pdf=:att1',  # This will set a new attribute
+                ExpressionAttributeValues={
+                    ':att1': {
+                        'datetime': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S') + '+00:00'
+                    }
                 }
+            )
+        except Exception as ex:
+            logger.error(f'Cannot update item in DynamoDB table {args["ddb_documents_table"]}')
+            raise ex
+
+        # perpare return dict
+        returns.append({
+            'selectable_pdf_s3': {
+                'bucket': args['output_bucket'],
+                'key': output_key,
             }
-        )
-    except Exception as ex:
-        logger.error(f'Cannot update item in DynamoDB table {args["ddb_documents_table"]}')
-        raise ex
+        })
 
     # return
-    return_dict = {
-        'selectable_pdf_s3': {
-            'bucket': args['output_bucket'],
-            'key': output_key,
-        }
-    }
+    return_dict = {'records': returns}
     return {'statusCode': 200, 'body': return_dict}
 
 
@@ -157,21 +164,28 @@ def parse_args(event: Dict) -> Dict:
     '''
     # get args from event
     args = dict()
-    args['document_id'] = event['document_id']
-    args['document_name'] = event['document_name']
-    args['original_document_s3'] = event['original_document_s3']
-    args['textract_output_s3'] = event['textract_output_s3']
-
-    # get the environnement variables
+    args['records'] = list()
+    for rec in event['Records']:
+        body = json.loads(rec['body'])
+        record = dict()
+        record['document_id'] = body['document_id']
+        record['document_name'] = body['document_name']
+        record['original_document_s3'] = body['original_document_s3']
+        record['textract_output_s3'] = body['textract_output_s3']
+    args['records'].append(record)
+    # get the environnement variables. They are the same for all records
     args['ddb_documents_table'] = os.getenv('DDB_DOCUMENTS_TABLE')
     args['output_bucket'] = os.getenv('OUTPUT_BUCKET')
     args['log_level'] = os.getenv('LOG_LEVEL', default='INFO')
     args['add_word_bbox'] = os.getenv('ADD_WORD_BBOX', default=False)
     args['show_character'] = os.getenv('SHOW_CHARACTER', default=False)
+    args['pdf_image_dpi'] = os.getenv('PDF_IMAGE_DPI', default='200')
+    
 
     # post process some environment variable (Lambda allow only strings)
     args['add_word_bbox'] = True if args['add_word_bbox'] in ['1', 'True', 'true'] else False
     args['show_character'] = True if args['show_character'] in ['1', 'True', 'true'] else False
+    args['pdf_image_dpi'] = int(args['pdf_image_dpi'])
 
     return args
 
@@ -214,14 +228,15 @@ def make_pdf_doc_searchable(
     textract_blocks: List[Dict[str, Any]],
     add_word_bbox: bool=False,
     show_selectable_char: bool=False,
-    verbose: bool=False
+    pdf_image_dpi: int=200,
+    verbose: bool=False,
 ) -> fitz.Document:
     '''
     '''
     # save the pages as images (jpg) and buddle these images into a pdf document (pdf_doc_img)
     pdf_doc_img = fitz.open()
     for ppi,pdf_page in enumerate(pdf_doc.pages()):
-        pdf_pix_map = pdf_page.get_pixmap(dpi=dpi, colorspace='RGB')
+        pdf_pix_map = pdf_page.get_pixmap(dpi=pdf_image_dpi, colorspace='RGB')
         pdf_page_img = pdf_doc_img.new_page(width=pdf_page.rect.width, height=pdf_page.rect.height)
         xref = pdf_page_img.insert_image(rect=pdf_page.rect, pixmap=pdf_pix_map)
     pdf_doc.close()
@@ -273,7 +288,7 @@ def make_pdf_doc_searchable(
                 fill_opacity=fill_opacity
             )
 
-    return pdf_page_img
+    return pdf_doc_img
 
 
 # classes
