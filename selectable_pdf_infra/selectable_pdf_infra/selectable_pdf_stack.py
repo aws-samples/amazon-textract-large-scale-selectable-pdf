@@ -19,6 +19,7 @@ from aws_cdk import (
 import os
 import subprocess
 import pathlib
+import uuid
 
 
 # Module environment variables
@@ -127,18 +128,17 @@ class SelectablePdfStack(Stack):
             retry_attempts=0,
             memory_size=128,  #128MB
         )
-
         # add the required policies to the default role creation with the lambda 
         # start_textract_lambda
-        managed_policies = [
-            'AmazonTextractFullAccess',
-            'AmazonS3FullAccess',  
-            'AmazonDynamoDBFullAccess'
-        ]
-        for policy in managed_policies:
-            start_textract_lambda.role.add_managed_policy(
-                aws_iam.ManagedPolicy.from_aws_managed_policy_name(policy)
-            )
+        start_textract_lambda.role.add_managed_policy(
+                aws_iam.ManagedPolicy.from_aws_managed_policy_name('AmazonTextractFullAccess')
+        )
+        start_textract_lambda.role.add_managed_policy(
+                aws_iam.ManagedPolicy.from_aws_managed_policy_name('AmazonS3ReadOnlyAccess')
+        )
+        start_textract_lambda.role.attach_inline_policy(
+            self.get_policy_write_to_ddb_table(ddb_documents_table)
+        )
         # set the trigger: S3 PUT on doc_bucket
         start_textract_lambda.add_event_source(
             source=aws_lambda_event_sources.S3EventSource(
@@ -148,9 +148,9 @@ class SelectablePdfStack(Stack):
             )
         )
 
+
         # Lambda getting the textract results from S3 and feeding textract output 
         # status to a SQS for future faning
-        
         sqs_visibility_timeout_sec = 10 * 60
         dlq_processed_textracted_queue_sqs = aws_sqs.Queue(self, id='DlqProcessedTextractQueue')
         processed_textracted_queue_sqs = aws_sqs.Queue(
@@ -179,19 +179,27 @@ class SelectablePdfStack(Stack):
                 'TEXTRACT_RES_QUEUE_URL': processed_textracted_queue_sqs.queue_url
             },
             retry_attempts=0, 
-            memory_size=4048,
+            memory_size=3000,
         )
         # add the required policies to the default role create with the lambda
-        managed_policies = [
-            'AmazonTextractFullAccess',
-            'AmazonS3FullAccess', 
-            'AmazonDynamoDBFullAccess', 
-            'AmazonSQSFullAccess'
-        ]
-        for policy in managed_policies:
-            process_textract_lambda.role.add_managed_policy(
-                aws_iam.ManagedPolicy.from_aws_managed_policy_name(policy)
+        process_textract_lambda.role.add_managed_policy(
+                aws_iam.ManagedPolicy.from_aws_managed_policy_name('AmazonTextractFullAccess')
             )
+        process_textract_lambda.role.attach_inline_policy(
+            self.get_policy_write_to_ddb_table(ddb_documents_table)
+        )
+        process_textract_lambda.role.attach_inline_policy(
+            aws_iam.Policy(self, 'S3ReadWriteObject',
+                statements=[aws_iam.PolicyStatement(actions=['s3:GetObject','s3:PutObject'],
+                    resources=[doc_bucket.bucket_arn+'/*',processed_bucket.bucket_arn+'/*'])]
+            )
+        )
+        process_textract_lambda.role.attach_inline_policy(
+            aws_iam.Policy(self, 'SqsPublishMessage',
+                statements=[aws_iam.PolicyStatement(actions=['sqs:SendMessage'],
+                    resources=[processed_textracted_queue_sqs.queue_arn])]
+            )
+        )
         # set the trigger
         textract_job_topic.add_subscription(
             aws_sns_subscriptions.LambdaSubscription(process_textract_lambda)
@@ -220,14 +228,18 @@ class SelectablePdfStack(Stack):
 
             },
             retry_attempts=0,
-            memory_size=4048,  # 4GB to get a big CPU with the Lambda. Code is CPU intensive
+            memory_size=3000
         )
         # add the required policies to the default role creation with the lambda
-        managed_policies = ['AmazonS3FullAccess','AmazonDynamoDBFullAccess']
-        for policy in managed_policies:
-            selectable_pdf_lambda.role.add_managed_policy(
-                aws_iam.ManagedPolicy.from_aws_managed_policy_name(policy)
+        selectable_pdf_lambda.role.attach_inline_policy(
+            self.get_policy_write_to_ddb_table(ddb_documents_table)
+        )
+        selectable_pdf_lambda.role.attach_inline_policy(
+            aws_iam.Policy(self, 'S3ReadWrite',
+                statements=[aws_iam.PolicyStatement(actions=['s3:GetObject','s3:PutObject'],
+                    resources=[doc_bucket.bucket_arn+'/*',processed_bucket.bucket_arn+'/*'])]
             )
+        )
         # add the SQS trigger
         selectable_pdf_lambda.add_event_source(
             source=aws_lambda_event_sources.SqsEventSource(
@@ -258,6 +270,22 @@ class SelectablePdfStack(Stack):
             description='Processing logs',
             export_name='ProcessingLogsDynamoDB',
         )
+
+
+    
+    def get_policy_write_to_ddb_table(self, table: aws_dynamodb.Table) -> aws_iam.Policy:
+        '''
+        return a Policy object to write to a DDB table
+        '''
+        policy = aws_iam.Policy(
+            self,
+            f'DynamoDB_writeToTable_{str(uuid.uuid4())[:4]}',
+            statements=[aws_iam.PolicyStatement(
+                actions=["dynamodb:PutItem","dynamodb:UpdateItem","dynamodb:UpdateTable"],
+                resources=[table.table_arn]
+            )]
+        )
+        return policy 
 
 
     @staticmethod

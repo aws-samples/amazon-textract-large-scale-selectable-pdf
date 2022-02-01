@@ -9,7 +9,7 @@ from selectable_pdf_infra.selectable_pdf_stack import SelectablePdfStack
 stack_id = 'SelectablePDF'
 stack_desc = 'infrastructure to generate selectable PDF at scale'
 # Region
-region = "eu-west-1"
+region = 'eu-west-1'  #Irland
 # logging level for the lambda functions
 log_level = 'INFO'  #log level for the Lambdas. only INFO is implemented atm.
 
