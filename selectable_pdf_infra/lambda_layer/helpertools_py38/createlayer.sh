@@ -4,8 +4,8 @@
 # create the layer with:
 # ./createlayer.sh 3.8
 
-lib_name="textracttools"
-lib_dir="../../../lib/textracttools"
+lib_name="helpertools"
+lib_dir="../../../lib/helpertools"
 
 if [ "$1" != "" ] || [$# -gt 1]; then
 	echo "Creating layer compatible with python version $1"

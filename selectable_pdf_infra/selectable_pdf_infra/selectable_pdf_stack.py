@@ -94,19 +94,19 @@ class SelectablePdfStack(Stack):
         )
 
         # Create the lambda layers
-        textract_layer = aws_lambda.LayerVersion(
+        textracttools_layer = aws_lambda.LayerVersion(
             self,
-            id='TextracttoolsV101',
+            id='TextractTools',
             code=aws_lambda.Code.from_asset(self.build_textracttools_layer()),
             compatible_runtimes=[aws_lambda.Runtime.PYTHON_3_8],
-            description ='contains TextractTools module'
+            description ='TextractTools python module'
         )
-        pypi_layer = aws_lambda.LayerVersion(
+        helpertools_layer = aws_lambda.LayerVersion(
             self,
-            id='pypimodules',
-            code=aws_lambda.Code.from_asset(self.build_pypi_layer()),
+            id='HelperTools',
+            code=aws_lambda.Code.from_asset(self.build_helpertools_layer()),
             compatible_runtimes=[aws_lambda.Runtime.PYTHON_3_8],
-            description ='contains various modules from pypi: PyMuPdf'
+            description ='HelperTools and PyMuPdf python modules'
         )
 
         # lambda function starting textract. The lambda is triggered with a S3 PUT 
@@ -119,6 +119,7 @@ class SelectablePdfStack(Stack):
             handler='main.lambda_handler',
             code=aws_lambda.Code.from_asset(os.path.join(LAMBDA_DIRPATH, 'start_textract')),
             timeout=Duration.seconds(lambda_timeout_sec),
+            layers=[helpertools_layer],
             environment={
                 'LOG_LEVEL': log_level,
                 'SNS_TOPIC_ARN': textract_job_topic.topic_arn,
@@ -169,7 +170,7 @@ class SelectablePdfStack(Stack):
             runtime=aws_lambda.Runtime.PYTHON_3_8,
             handler='main.lambda_handler',
             code=aws_lambda.Code.from_asset(os.path.join(LAMBDA_DIRPATH, 'process_textract')),
-            layers=[textract_layer],
+            layers=[textracttools_layer, helpertools_layer],
             timeout=Duration.seconds(lambda_timeout_sec),
             environment={
                 'LOG_LEVEL': log_level,
@@ -216,7 +217,7 @@ class SelectablePdfStack(Stack):
             runtime=aws_lambda.Runtime.PYTHON_3_8,
             handler='main.lambda_handler',
             code=aws_lambda.Code.from_asset(os.path.join(LAMBDA_DIRPATH, 'selectable_pdf')),
-            layers=[textract_layer, pypi_layer],
+            layers=[textracttools_layer, helpertools_layer],
             timeout=Duration.seconds(lambda_timeout_sec),
             environment={
                 'DDB_DOCUMENTS_TABLE': ddb_documents_table.table_name,
@@ -289,6 +290,35 @@ class SelectablePdfStack(Stack):
 
 
     @staticmethod
+    def build_helpertools_layer() -> str:
+        '''
+        Build the helpertools Python module into a wheel then package it into 
+        a zip-file which can be deploy as a AWS Lambda layer. The layer is build 
+        within a container.
+
+        Usage
+        -----
+        layer_zipfile = self.build_helpertools_layer()
+
+        Arguments
+        ---------
+        None
+
+        Returns
+        -------
+        layer_zippath
+            Path to the layer zipfile.
+        '''
+        cwd = os.path.abspath(os.getcwd())
+        layerbuilder_dirpath = os.path.join(LAMBDA_LAYER_DIRPATH,'helpertools_py38')
+        os.chdir(layerbuilder_dirpath)
+        subprocess.run(['./createlayer.sh','3.8'], capture_output=True)
+        layer_zippath = os.path.join(layerbuilder_dirpath, 'helpertools.zip')
+        os.chdir(cwd)
+        return layer_zippath
+
+
+    @staticmethod
     def build_textracttools_layer() -> str:
         '''
         Build the textracttools Python module into a wheel then package it into 
@@ -309,69 +339,9 @@ class SelectablePdfStack(Stack):
             Path to the layer zipfile.
         '''
         cwd = os.path.abspath(os.getcwd())
-        textracttools_dirpath = os.path.join(LIB_DIRPATH,'textracttools')
-        os.chdir(textracttools_dirpath)
-        subprocess.run(['python', 'setup.py', 'sdist', 'bdist_wheel'], capture_output=True)
         layerbuilder_dirpath = os.path.join(LAMBDA_LAYER_DIRPATH,'textracttools_py38')
         os.chdir(layerbuilder_dirpath)
         subprocess.run(['./createlayer.sh','3.8'], capture_output=True)
-        layer_zippath = os.path.join(layerbuilder_dirpath, 'textracttools_py38.zip')
-        os.chdir(cwd)
-
-        return layer_zippath
-
-
-    @staticmethod
-    def build_pypi_layer() -> str:
-        '''
-        Build the pypi layer which contains any module which can be installed from pypi.
-
-        Usage
-        -----
-        layer_zipfile = self.build_pypi_layer()
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        layer_zippath
-            Path to the layer zipfile.
-        '''
-        cwd = os.path.abspath(os.getcwd())
-        layerbuilder_dirpath = os.path.join(LAMBDA_LAYER_DIRPATH,'pypi_py38')
-        os.chdir(layerbuilder_dirpath)
-        subprocess.run(['./createlayer.sh','3.8'], capture_output=True)
-        layer_zippath = os.path.join(layerbuilder_dirpath, 'pypi_py38.zip')
+        layer_zippath = os.path.join(layerbuilder_dirpath, 'textracttools.zip')
         os.chdir(cwd)
         return layer_zippath
-
-    
-    @staticmethod
-    def build_selectable_pdf_lib() -> str:
-        '''
-        Build the Java library SearchablePDF. the *.jar generated by the build is 
-        then used in a lambda function. Maven, Java and the JAVA SDK must be available 
-        for the build
-
-        Usage
-        -----
-        layer_zipfile = self.build_textracttools_layer()
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        jarpath
-            Path to the jarfile.
-        '''
-        cwd = os.path.abspath(os.getcwd())
-        lib_dir = os.path.join(LAMBDA_DIRPATH, 'selectablePDF')
-        os.chdir(lib_dir)
-        subprocess.run(['mvn', 'package'], capture_output=True)
-        jarpath = os.path.join(lib_dir, 'target', 'selectable-pdf-1.0.jar')
-        os.chdir(cwd)
-        return jarpath

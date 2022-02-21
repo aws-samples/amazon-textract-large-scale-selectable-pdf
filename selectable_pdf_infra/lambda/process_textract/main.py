@@ -28,7 +28,8 @@ import os
 from datetime import datetime
 
 # custom modules from layers
-from textracttools import TextractParser, save_json_to_s3, convert_httpheaders_date
+from textracttools import TextractParser, save_json_to_s3
+from helpertools import get_logger
 
 # typing
 from typing import Dict
@@ -37,22 +38,7 @@ from typing import Dict
 # ------ 
 #If no LOG_LEVEL env var or wrong LOG_LEVEL env var, fallback 
 # to INFO log level
-log_level = os.getenv('LOG_LEVEL', default='INFO')
-log_level_int = int()
-if log_level=='WARNING':
-    log_level_int = logging.WARNING
-elif log_level=='ERROR':
-    log_level_int = logging.WARNING
-elif log_level=='DEBUG':
-    log_level_int = logging.DEBUG
-else:
-    log_level_int = logging.INFO
-logging.basicConfig(
-    format='%(levelname)s %(message)s',
-    level=log_level_int,
-    force=True  #new in py3.8
-)
-logger = logging.getLogger()
+logger = get_logger(os.getenv('LOG_LEVEL', default='INFO'))
 
 
 # lambda entrypoint
@@ -101,7 +87,7 @@ def lambda_handler(event, context):
                 }
             )
         except Exception as ex:
-            logger.error(f'Cannot update item in DynamoDB table {args["ddb_documents_table"]}')
+            logger.error(f"Cannot update item in DynamoDB table {args['ddb_documents_table']}")
             raise ex
 
         # get the blocks and save them to s3
