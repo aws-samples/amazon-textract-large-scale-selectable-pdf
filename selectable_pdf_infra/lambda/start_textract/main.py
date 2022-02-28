@@ -2,7 +2,7 @@
 start_textract
 --------------
 
-Lambda function which starts an asychronous Textract job on a S3 PUT trigger.
+Lambda function which starts an asynchronous Textract job on a S3 PUT trigger.
 
 Requirements
 ------------
@@ -85,7 +85,7 @@ def lambda_handler(event, context):
     ddb_ress = boto3.resource('dynamodb')
     ddb_doc_table = ddb_ress.Table(args['ddb_documents_table'])
 
-    # start textract for each s3 rcords. But generally, there is only one record
+    # start textract for each s3 records. But generally, there is only one record
     responses = list()
     for r,record in enumerate(args['records']):
         logger.info(f"prcessing document {r} of {len(args['records'])}")
@@ -255,7 +255,7 @@ def convert_datetime_s3_event(
     output_datetime_format: str='%Y-%m-%dT%H:%M:%S+00:00'
 ) -> str:
     '''
-    S3 events as recieved by the lambda function have the format `2021-04-15T16:20:02.994Z`.
+    S3 events as received by the lambda function have the format `2021-04-15T16:20:02.994Z`.
     This function (and all functions convert_datetime*) converts it to 
     `2021-04-15T16:20:02.994+00:00`, the ISO 8601 format. The output format can be 
     modified via the output_datetime_format argument.
@@ -286,7 +286,7 @@ def generate_uid(
 ) -> str:
     '''
     Generate a random Unique ID (UID) base on the current datetime + a string of 
-    8 random characters (default behavior).
+    8 random characters extracted from a UUID1 (default behavior).
 
     Usage
     -----
@@ -295,7 +295,7 @@ def generate_uid(
     Arguments
     ---------
     type
-        The method used to generate the random UID. either 'date' or 'uuid1'
+        The method used to generate the random UID. either 'date' or 'uuid1'.
 
     Returns
     -------
@@ -305,7 +305,7 @@ def generate_uid(
     if method == 'date':
         now = datetime.now()
         now_as_str = now.strftime(datetime_format)
-        random_chars = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+        random_chars = str(uuid.uuid1())[:8]
         return now_as_str + '-' + random_chars
     elif method == 'uuid1':
         return str(uuid.uuid1())

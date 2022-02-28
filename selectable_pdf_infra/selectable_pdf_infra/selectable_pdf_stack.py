@@ -229,7 +229,7 @@ class SelectablePdfStack(Stack):
 
             },
             retry_attempts=0,
-            memory_size=3000
+            memory_size=2048
         )
         # add the required policies to the default role creation with the lambda
         selectable_pdf_lambda.role.attach_inline_policy(

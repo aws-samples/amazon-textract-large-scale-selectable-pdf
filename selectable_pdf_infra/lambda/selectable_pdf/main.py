@@ -6,7 +6,7 @@ Add selectable characters to a PDF. Useful to convert a scanned PDF (i.e. pixel
 characters) into a selectable PDF.
 
 Algorithm:
-1. load the original PDF from S3 (S3 localtion info located in the SQS message)
+1. load the original PDF from S3 (S3 location info located in the SQS message)
 2. read all the page and convert them to image. Indeed, the original PDF might already 
    have selectable characters, or a mix with pixel characters, so we want to avoid 
    overlay characters on characters

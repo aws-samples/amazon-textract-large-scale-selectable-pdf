@@ -8,7 +8,7 @@ A collection of tool the manipulate textract and a2i IO payloads:
 import os
 import json
 import boto3
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Any
 
 
 # Classes
@@ -236,7 +236,7 @@ class TextractParser():
 
     def get_table_column(self, index: int, Id: str) -> List:
         '''
-        Return the column `index` of the table identitfied by Id. The list of table 
+        Return the column `index` of the table identified by Id. The list of table 
         Ids can be fetch with self.table_ids.
         '''
         table, _, _ = self.table_as_list(Id)
@@ -245,7 +245,7 @@ class TextractParser():
 
     def get_table_row(self, index: int, Id: str) -> List:
         '''
-        Return the row `index` of the table identitfied by Id. The list of table 
+        Return the row `index` of the table identified by Id. The list of table 
         Ids can be fetch with self.table_ids.
         '''
         table, _, _ = self.table_as_list(Id)
@@ -273,7 +273,7 @@ class TextractParser():
         '''
         convert the tables to payload for the a2i custom UI. The custom UI needs 
         the tables (provided by self) and the s3 url. This method generates ONLY
-        the paylaod for the custom UI, which must be embedded into the A2I 
+        the payload for the custom UI, which must be embedded into the A2I 
         payload.
 
         Usage
@@ -364,14 +364,14 @@ class TextractParser():
 
 
     @staticmethod
-    def get_textract_result_blocks(job_id: str) -> Dict:
+    def get_textract_result_blocks(job_id: str) -> Dict[str, Any]:
         '''
-        Return the textract results blocks. In the Textarct language, a block is 
+        Return the textract results blocks. In the Textract language, a block is 
         a `piece of text`, i.e. a sentence, a title, a footnote, a table, etc
         
         Usage
         -----
-        blocks = TextractParser.get_textract_result_blocks(job_id)
+        textract_output = TextractParser.get_textract_result_blocks(job_id)
 
         Arguments
         ---------
@@ -382,17 +382,29 @@ class TextractParser():
 
         Returns
         -------
-        blocks
-            The Textract blocks
+        textract_output
+            The Textract output. with the following structure:
+            {
+                'Blocks': ..., 
+                'DocumentMetadata': ..., 
+                'JobStatus': ..., 
+                'NextToken': ..., 
+                'AnalyzeDocumentModelVersion': ..., 
+                'ResponseMetadata': ...
+            ]
         '''
         textract_client = boto3.client('textract')
         extraArgs = {}
-        result_value = {"Blocks": []}
+        result_value = {'Blocks': list()}
         while True:
             textract_results = textract_client.get_document_analysis(
                 JobId=job_id, **extraArgs
             )
-            result_value['Blocks'].extend(textract_results['Blocks'])
+            for k,v in textract_results.items():
+                if k=='Blocks':
+                    result_value['Blocks'].extend(textract_results['Blocks'])
+                else:
+                    result_value[k] = v
             if 'NextToken' in textract_results:
                 extraArgs['NextToken'] = textract_results['NextToken']
             else:
@@ -431,7 +443,7 @@ def table_2_csv(table: List[List], output_csv: str, sep: str = ',') -> None:
 
 def get_textract_result_blocks(job_id: str) -> Dict:
     '''
-    Return the textract results blocks. In the Textarct language, a block is 
+    Return the textract results blocks. In the Textract language, a block is 
     a `piece of text`, i.e. a sentence, a title, a footnote, a table, etc. The 
     Textract job status must be SUCCEEDED.
     
@@ -444,7 +456,7 @@ def get_textract_result_blocks(job_id: str) -> Dict:
     # check job status
     job_status = textract_client.get_document_analysis(JobId=job_id)['JobStatus']
     if job_status!='SUCCEEDED':
-        raise ValueError('Textract job not finised')
+        raise ValueError('Textract job in progress')
 
     extraArgs = {}
     result_value = {"Blocks": []}
