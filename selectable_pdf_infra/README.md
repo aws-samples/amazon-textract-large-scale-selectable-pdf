@@ -9,13 +9,7 @@ scanned PDFs (i.e. where the text cannot be selected) into Selectable PDF
 To deploy this stack, you need:
 * An AWS account
 * Python 3.6 or higher
-* Node.js v10 or higher
-* zip
-* NPM
-* Java 11 or higher (it should work with previous version of Java. not tested)
-    * Java Runtime Environment (JRE)
-    * Java Development Kit (JDK)
-* Apache [Maven](https://maven.apache.org/)
+* zip (the bash command `zip`)
 * [AWS CLI](https://aws.amazon.com/cli/): Properly configured with AWS configure
 * [AWS CDK](https://aws.amazon.com/cdk/): version 1.109 or higher
 
