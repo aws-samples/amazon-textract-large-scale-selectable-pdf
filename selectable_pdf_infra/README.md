@@ -8,10 +8,12 @@ scanned PDFs (i.e. where the text cannot be selected) into Selectable PDF
 
 To deploy this stack, you need:
 * An AWS account
+* [Docker](https://docs.docker.com/get-docker/). You must be able to run docker as 
+  non-root user
 * Python 3.6 or higher
 * zip (the bash command `zip`)
 * [AWS CLI](https://aws.amazon.com/cli/): Properly configured with AWS configure
-* [AWS CDK](https://aws.amazon.com/cdk/): version 1.109 or higher
+* [AWS CDK](https://aws.amazon.com/cdk/): version 2.X or higher
 
 You can find the instruction to install and configure these prerequisites [here](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html#getting_started_prerequisites).
 
