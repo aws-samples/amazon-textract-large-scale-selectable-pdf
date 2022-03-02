@@ -70,6 +70,28 @@ and its infrastructure.
    aws s3 cp s3://<ProcessedDocuments>/SampleInput.pdf  examples/SampleInput_selectable.pdf 
    ```
 
+In the _ProcessedDocuments_ bucket, you can also find folders which contains the Textract 
+output for each processed document. The folders are named according the document_id generated 
+for each processed document. You can link `document_id` and `document_name` with the DynamoDB 
+table named `<STACK_NAME>-Documents<UID>`. This table is sorted with the document_id as ID key and 
+the document name as hash key. Here is a code snippet to extract `document_id` and 
+`document_name` from the DynamoDB table:
+```python
+import boto3
+import json
+
+# after deployment you can find the table as environment variable in each lambda 
+# function. For example, go to the start_textract lambda function and check its env 
+# variables. The table name is also provided as output after seplying the stack
+table_name = '<TABLE_NAME>'
+
+ddb_client = boto3.client('dynamodb')
+response = ddb_client.scan(TableName=table_name)
+for item in response['Items']:
+    print(f"doc name: {item['document_name']['S']}, doc ID: {item['document_id']['S']}")
+```
+The Textract output is key for downstream tasks such as Natural Language Processing (NLP).
+
 ## Notes
 * Partially based on this (AWS blog post)[https://aws.amazon.com/blogs/machine-learning/generating-searchable-pdfs-from-scanned-documents-automatically-with-amazon-textract/].
 
