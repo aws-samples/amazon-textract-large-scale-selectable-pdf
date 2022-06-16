@@ -3,9 +3,9 @@ process_textract
 ----------------
 
 Lambda function processing a Textract job. Once a textract job is processed, the output of 
-the job is written on S3 and a meassage is push on a SQS queue with the output localtion.
+the job is written on S3 and a message is push on a SQS queue with the output location.
 
-Textract publishs its job status on a SNS topic. This Lambda function is trigger by a 
+Textract publishes its job status on a SNS topic. This Lambda function is trigger by a 
 SNS topic used by Textract.
 
 Requirements
@@ -29,7 +29,7 @@ from datetime import datetime
 
 # custom modules from layers
 from textracttools import TextractParser, save_json_to_s3
-from helpertools import get_logger
+from helpertools import ProcessingDdbTable, get_logger
 
 # typing
 from typing import Dict
@@ -50,8 +50,7 @@ def lambda_handler(event, context):
     # Get AWS connectors. The SQS client need the legacy endpoint, but when calling
     # a queue with the client, the queue URL must have the new endpoint:
     # https://docs.aws.amazon.com/general/latest/gr/sqs-service.html#sqs_region
-    ddb_ress = boto3.resource('dynamodb')
-    ddb_doc_table = ddb_ress.Table(args['ddb_documents_table'])
+    ddb_doc_table = ProcessingDdbTable(args['ddb_documents_table'])
     sqs_legacy_endpoint_url = f"https://{args['region']}.queue.amazonaws.com"
     sqs_client = boto3.client('sqs', endpoint_url=sqs_legacy_endpoint_url)
 
@@ -64,7 +63,7 @@ def lambda_handler(event, context):
     tt_bucket = args['textract_bucket']
     logger.info('nb of textract jobs: {}'.format(len(args['textract_jobs'])))
     for t,tt_job in enumerate(args['textract_jobs']):
-        logger.info(f"prcessing Textract job {t} of {len(args['textract_jobs'])}")
+        logger.info(f"processing Textract job {t} of {len(args['textract_jobs'])}")
 
         document_id = tt_job['job_tag']
         document_name = tt_job['original_document']['key'].split('/')[-1]
@@ -73,22 +72,13 @@ def lambda_handler(event, context):
         logger.info(f"document key: {tt_job['original_document']['key']}")
 
         # store info about textract job end in DynamoDB
-        try:
-            ddb_doc_table.update_item(
-                Key={
-                    'document_id': document_id,  # HASH key
-                    'document_name': document_name  # RANGE key
-                },
-                UpdateExpression='SET textract_async_end=:att1',  # This will set a new attribute
-                ExpressionAttributeValues={
-                    ':att1': {
-                        'datetime': tt_job['end_datetime'].strftime('%Y-%m-%dT%H:%M:%S') + '+00:00'
-                    }
-                }
-            )
-        except Exception as ex:
-            logger.error(f"Cannot update item in DynamoDB table {args['ddb_documents_table']}")
-            raise ex
+        ddb_doc_table.update_item(
+            doc_id=document_id, 
+            doc_name=document_name,
+            key='textract_async_end',
+            value={'datetime': tt_job['end_datetime'].strftime('%Y-%m-%dT%H:%M:%S') + '+00:00'},
+            add_logging_datetime=False
+        )
 
         # get the blocks and save them to s3
         blocks = TextractParser.get_textract_result_blocks(tt_job['job_id'])

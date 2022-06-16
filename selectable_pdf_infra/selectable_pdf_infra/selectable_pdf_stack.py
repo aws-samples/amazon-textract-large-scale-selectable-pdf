@@ -53,10 +53,19 @@ class SelectablePdfStack(Stack):
             id='InputDocuments',
             removal_policy=RemovalPolicy.DESTROY, #kept if not empty
         )
+        doc_bucket_r_policy = aws_iam.Policy(self, 'DocBucketRead',
+            statements=[aws_iam.PolicyStatement(actions=['s3:GetObject'],
+            resources=[doc_bucket.bucket_arn+'/*'])]
+        )
+
         processed_bucket = aws_s3.Bucket(
             self,
             id='ProcessedDocuments',
             removal_policy=RemovalPolicy.DESTROY, #kept if not empty
+        )
+        processed_bucket_rw_policy = aws_iam.Policy(self, 'ProcessedBucketReadWrite',
+            statements=[aws_iam.PolicyStatement(actions=['s3:GetObject','s3:PutObject'],
+            resources=[processed_bucket.bucket_arn+'/*'])]
         )
 
         # create the DynamoDB tables. We create N tables:
@@ -70,7 +79,13 @@ class SelectablePdfStack(Stack):
             sort_key=aws_dynamodb.Attribute(
                 name='document_name', type=aws_dynamodb.AttributeType.STRING
             ),
-            billing_mode=aws_dynamodb.BillingMode.PAY_PER_REQUEST,
+            billing_mode=aws_dynamodb.BillingMode.PAY_PER_REQUEST
+        )
+        ddb_documents_table_policy = aws_iam.Policy(self,f'DdbDocTablePolicy',
+            statements=[aws_iam.PolicyStatement(
+                actions=['dynamodb:PutItem','dynamodb:UpdateItem','dynamodb:UpdateTable', 'dynamodb:DescribeTable'],
+                resources=[ddb_documents_table.table_arn]
+            )]
         )
 
         # SNS topic for Textract and role to use it. The role is used by textract to publish 
@@ -134,12 +149,8 @@ class SelectablePdfStack(Stack):
         start_textract_lambda.role.add_managed_policy(
                 aws_iam.ManagedPolicy.from_aws_managed_policy_name('AmazonTextractFullAccess')
         )
-        start_textract_lambda.role.add_managed_policy(
-                aws_iam.ManagedPolicy.from_aws_managed_policy_name('AmazonS3ReadOnlyAccess')
-        )
-        start_textract_lambda.role.attach_inline_policy(
-            self.get_policy_write_to_ddb_table(ddb_documents_table)
-        )
+        start_textract_lambda.role.attach_inline_policy(doc_bucket_r_policy)
+        start_textract_lambda.role.attach_inline_policy(ddb_documents_table_policy)
         # set the trigger: S3 PUT on doc_bucket
         start_textract_lambda.add_event_source(
             source=aws_lambda_event_sources.S3EventSource(
@@ -163,6 +174,11 @@ class SelectablePdfStack(Stack):
                 queue=dlq_processed_textracted_queue_sqs
             )
         )
+        textract_output_sqs_w_policy = aws_iam.Policy(self, 'SqsPublishMessage',
+            statements=[aws_iam.PolicyStatement(actions=['sqs:SendMessage'],
+                resources=[processed_textracted_queue_sqs.queue_arn])]
+        )
+
         lambda_timeout_sec = 5 * 60
         process_textract_lambda = aws_lambda.Function(
             self,
@@ -186,21 +202,10 @@ class SelectablePdfStack(Stack):
         process_textract_lambda.role.add_managed_policy(
                 aws_iam.ManagedPolicy.from_aws_managed_policy_name('AmazonTextractFullAccess')
             )
-        process_textract_lambda.role.attach_inline_policy(
-            self.get_policy_write_to_ddb_table(ddb_documents_table)
-        )
-        process_textract_lambda.role.attach_inline_policy(
-            aws_iam.Policy(self, 'S3ReadWriteObject',
-                statements=[aws_iam.PolicyStatement(actions=['s3:GetObject','s3:PutObject'],
-                    resources=[doc_bucket.bucket_arn+'/*',processed_bucket.bucket_arn+'/*'])]
-            )
-        )
-        process_textract_lambda.role.attach_inline_policy(
-            aws_iam.Policy(self, 'SqsPublishMessage',
-                statements=[aws_iam.PolicyStatement(actions=['sqs:SendMessage'],
-                    resources=[processed_textracted_queue_sqs.queue_arn])]
-            )
-        )
+        process_textract_lambda.role.attach_inline_policy(ddb_documents_table_policy)
+        process_textract_lambda.role.attach_inline_policy(doc_bucket_r_policy)
+        process_textract_lambda.role.attach_inline_policy(processed_bucket_rw_policy)
+        process_textract_lambda.role.attach_inline_policy(textract_output_sqs_w_policy)
         # set the trigger
         textract_job_topic.add_subscription(
             aws_sns_subscriptions.LambdaSubscription(process_textract_lambda)
@@ -232,15 +237,9 @@ class SelectablePdfStack(Stack):
             memory_size=2048
         )
         # add the required policies to the default role creation with the lambda
-        selectable_pdf_lambda.role.attach_inline_policy(
-            self.get_policy_write_to_ddb_table(ddb_documents_table)
-        )
-        selectable_pdf_lambda.role.attach_inline_policy(
-            aws_iam.Policy(self, 'S3ReadWrite',
-                statements=[aws_iam.PolicyStatement(actions=['s3:GetObject','s3:PutObject'],
-                    resources=[doc_bucket.bucket_arn+'/*',processed_bucket.bucket_arn+'/*'])]
-            )
-        )
+        selectable_pdf_lambda.role.attach_inline_policy(ddb_documents_table_policy)
+        selectable_pdf_lambda.role.attach_inline_policy(doc_bucket_r_policy)
+        selectable_pdf_lambda.role.attach_inline_policy(processed_bucket_rw_policy)
         # add the SQS trigger
         selectable_pdf_lambda.add_event_source(
             source=aws_lambda_event_sources.SqsEventSource(
@@ -249,44 +248,30 @@ class SelectablePdfStack(Stack):
             )
         )
 
-        # Outputs
+        # stack output
+        # output_prefix = 'SelectablePdf'
+        output_prefix = construct_id
         CfnOutput(
             self,
             id='DocumentInputBucket',
             value=doc_bucket.bucket_name,
             description='Bucket where to load the PDFs',
-            export_name='DocumentInputBucket',
+            export_name=f'{output_prefix}DocumentInputBucket',
         )
         CfnOutput(
             self,
             id='DocumentOutputBucket',
             value=processed_bucket.bucket_name,
             description='Bucket where the processed PDFs and the intermediary files are stored',
-            export_name='DocumentOutputBucket',
+            export_name=f'{output_prefix}DocumentOutputBucket',
         )
         CfnOutput(
             self,
             id='ProcessingLogsDynamoDB',
             value=ddb_documents_table.table_name,
             description='Processing logs',
-            export_name='ProcessingLogsDynamoDB',
+            export_name=f'{output_prefix}ProcessingLogsDdb',
         )
-
-
-    
-    def get_policy_write_to_ddb_table(self, table: aws_dynamodb.Table) -> aws_iam.Policy:
-        '''
-        return a Policy object to write to a DDB table
-        '''
-        policy = aws_iam.Policy(
-            self,
-            f'DynamoDB_writeToTable_{str(uuid.uuid4())[:4]}',
-            statements=[aws_iam.PolicyStatement(
-                actions=["dynamodb:PutItem","dynamodb:UpdateItem","dynamodb:UpdateTable"],
-                resources=[table.table_arn]
-            )]
-        )
-        return policy 
 
 
     @staticmethod

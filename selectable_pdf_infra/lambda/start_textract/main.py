@@ -25,7 +25,7 @@ import string
 from datetime import datetime, timedelta
 from urllib.parse import unquote_plus
 
-from helpertools import get_logger
+from helpertools import ProcessingDdbTable, get_logger
 
 from typing import Dict
 
@@ -81,9 +81,8 @@ def lambda_handler(event, context):
     # get args
     args = parse_args(event)
 
-    # create AWS connectors
-    ddb_ress = boto3.resource('dynamodb')
-    ddb_doc_table = ddb_ress.Table(args['ddb_documents_table'])
+    # get logging table object
+    ddb_doc_table = ProcessingDdbTable(args['ddb_documents_table'])
 
     # start textract for each s3 records. But generally, there is only one record
     responses = list()
@@ -99,26 +98,25 @@ def lambda_handler(event, context):
         logger.info(f"document key: {record['key']}")
 
         # Create the item in DDB
-        try:
-            document_name = record['key'].split('/')[-1]
-            ddb_doc_table.put_item(
-                Item={
-                    'document_id': document_id,
-                    'document_name': document_name,
-                    'document_s3': {
-                        'bucket': record['bucket'],
-                        'key': record['key'],
-                    },
-                    'document_put_event': {
-                        'datetime': convert_datetime_s3_event(record['event_datetime']),
-                        'user_id': record['event_user_id'],
-                        'user_ip': record['event_user_ip']
-                    }
+        document_name = record['key'].split('/')[-1]
+        ddb_doc_table.put_item(
+            doc_id=document_id, 
+            doc_name=document_name,  
+            item={
+                'document_id': document_id,
+                'document_name': document_name,
+                'document_s3': {
+                    'bucket': record['bucket'],
+                    'key': record['key'],
+                },
+                'document_put_event': {
+                    'datetime': convert_datetime_s3_event(record['event_datetime']),
+                    'user_id': record['event_user_id'],
+                    'user_ip': record['event_user_ip']
                 }
-            )
-        except Exception as ex:
-            logger.error(f'Cannot put item to DynamoDB table {args["ddb_documents_table"]}')
-            raise ex
+            },
+            add_logging_datetime=False
+        )
 
         # start textract
         try:
@@ -135,27 +133,14 @@ def lambda_handler(event, context):
             logger.error('Textract async job failed to start')
             raise ex
 
-
         # add textract response to DDB
-        try:
-            ddb_doc_table.update_item(
-                Key={
-                    'document_id': document_id,  # HASH key
-                    'document_name': document_name  # RANGE key
-                },
-                UpdateExpression='SET textract_async_start=:att1',  # This will set a new attribute
-                ExpressionAttributeValues={
-                    ':att1': {
-                        'job_id': tt_resp['JobId'],
-                        'datetime': convert_datetime_textract(
-                            tt_resp['ResponseMetadata']['HTTPHeaders']['date']
-                        ),
-                    }
-                }
-            )
-        except Exception as ex:
-            logger.error(f'Cannot update item in DynamoDB table {args["ddb_documents_table"]}')
-            raise ex
+        ddb_doc_table.update_item(
+            doc_id=document_id, 
+            doc_name=document_name, 
+            key='textract_async_start', 
+            value={'job_id': tt_resp['JobId']},
+            add_logging_datetime=True
+        )
 
         # build a nice return
         responses.append({

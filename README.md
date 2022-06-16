@@ -80,16 +80,38 @@ the document name as hash key. Here is a code snippet to extract `document_id` a
 import boto3
 import json
 
-# after deployment you can find the table as environment variable in each lambda 
-# function. For example, go to the start_textract lambda function and check its env 
-# variables. The table name is also provided as output after seplying the stack
-table_name = '<TABLE_NAME>'
+# after deployment you can find the table name:
+# 1. in the CDK outputs
+# 2. In the AWS Console: go to the DynamoDB table and look for a table named 
+#    `<stack_name>-Documents<UID>` where UID is a set of 15 to 25 random characters 
+#    give by CDK to this resource.
+table_name = '<stack_name>-Documents<UID>'
 
 ddb_client = boto3.client('dynamodb')
 response = ddb_client.scan(TableName=table_name)
 for item in response['Items']:
     print(f"doc name: {item['document_name']['S']}, doc ID: {item['document_id']['S']}")
 ```
+You can also get similar results using the DynamoDB helper class in the `helpertools` 
+library included in this repository (see `lib/helpertools`). In this example below, 
+you need to specify the document ID:
+```python
+from helpertools import ProcessingDdbTable
+
+# after deployment you can find the table name:
+# 1. in the CDK outputs
+# 2. In the AWS Console: go to the DynamoDB table and look for a table named 
+#    `<stack_name>-Documents<UID>` where UID is a set of 15 to 25 random characters 
+#    give by CDK to this resource.
+table_name = '<stack_name>-Documents<UID>'
+doc_id = 'my_doc_id'
+ddb_table = ProcessingDdbTable(table_name)
+items = ddb_table.get_items(doc_id)
+for item in items: #only one item
+   print(f"doc name: {item['document_name']}, doc ID: {item['document_id']}")
+```
+
+
 The Textract output is key for downstream tasks such as Natural Language Processing (NLP).
 
 ## Notes

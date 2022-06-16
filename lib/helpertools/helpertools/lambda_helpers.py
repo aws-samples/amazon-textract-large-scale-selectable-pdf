@@ -59,25 +59,3 @@ def get_logger(
     )
     logger = logging.getLogger()
     return logger
-
-
-def ddb_update_item(table, hash_key: str, range_key: str, item: str, value: Dict) -> None:
-    '''
-    Update an existing item in a DynamoDB table with a new value
-    '''
-    try:
-        table.update_item(
-            Key={
-                'document_id': hash_key,  # HASH key
-                'document_name': range_key  # RANGE key
-            },
-            UpdateExpression=f'SET {item}=:att1',  # This will set a new attribute
-            ExpressionAttributeValues={
-                f':{value}': {
-                    'datetime': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S') + '+00:00'
-                }
-            }
-        )
-    except Exception as ex:
-        logger.error(f'Cannot update item in DynamoDB table {table}')
-        raise ex

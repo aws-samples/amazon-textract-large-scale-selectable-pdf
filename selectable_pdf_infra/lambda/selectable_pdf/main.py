@@ -31,6 +31,7 @@ import datetime
 # custom modules from layers
 from textracttools import load_json_from_s3
 from helpertools import (
+    ProcessingDdbTable,
     get_logger,
     load_pdf_from_s3, 
     save_pdf_to_s3, 
@@ -55,9 +56,8 @@ def lambda_handler(event, context):
     args = parse_args(event)
     logger.info(f'args: {args}')
 
-    # Get AWS connectors.
-    ddb_ress = boto3.resource('dynamodb')
-    ddb_doc_table = ddb_ress.Table(args['ddb_documents_table'])
+    # Get ddb table
+    ddb_doc_table = ProcessingDdbTable(args['ddb_documents_table'])
 
     returns = list()
     for rec in args['records']:
@@ -69,22 +69,13 @@ def lambda_handler(event, context):
         logger.info(f"document key: {rec['original_document_s3']['key']}")
 
         # store info about starting creating the selectable PDF document
-        try:
-            ddb_doc_table.update_item(
-                Key={
-                    'document_id': document_id,  # HASH key
-                    'document_name': document_name  # RANGE key
-                },
-                UpdateExpression='SET selectable_pdf=:att1',  # This will set a new attribute
-                ExpressionAttributeValues={
-                    ':att1': {
-                        'datetime': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S') + '+00:00'
-                    }
-                }
-            )
-        except Exception as ex:
-            logger.error(f'Cannot update item in DynamoDB table {args["ddb_documents_table"]}')
-            raise ex
+        ddb_doc_table.update_item(
+            doc_id=document_id, 
+            doc_name=document_name,
+            key='selectable_pdf',
+            value={'datetime': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S') + '+00:00'},
+            add_logging_datetime=False
+        )
 
         # process the PDF
         pdf_doc = load_pdf_from_s3(rec['original_document_s3']['bucket'], rec['original_document_s3']['key'])
@@ -108,25 +99,7 @@ def lambda_handler(event, context):
         output_key = document_name
         save_pdf_to_s3(selectable_pdf_doc, args['output_bucket'], output_key)
 
-        # store info about ending the selectable PDF document creation
-        try:
-            ddb_doc_table.update_item(
-                Key={
-                    'document_id': document_id,  # HASH key
-                    'document_name': document_name  # RANGE key
-                },
-                UpdateExpression='SET selectable_pdf=:att1',  # This will set a new attribute
-                ExpressionAttributeValues={
-                    ':att1': {
-                        'datetime': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S') + '+00:00'
-                    }
-                }
-            )
-        except Exception as ex:
-            logger.error(f'Cannot update item in DynamoDB table {args["ddb_documents_table"]}')
-            raise ex
-
-        # perpare return dict
+        # prepare return dict
         returns.append({
             'selectable_pdf_s3': {
                 'bucket': args['output_bucket'],
