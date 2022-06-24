@@ -1,3 +1,4 @@
 -e .
+-e ../lib/cdk-lambda-layer-builder/.
 wheel
 boto3

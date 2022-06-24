@@ -1,0 +1,18 @@
+# environement and IDE
+.venv
+.vscode
+
+# python stuff
+python
+*.egg-info
+build
+__cache__
+*.pyc
+
+# cdk
+cdk.out
+asset.*
+
+# binaries
+*.zip
+

@@ -17,9 +17,8 @@ from aws_cdk import (
 )
 
 import os
-import subprocess
 import pathlib
-import uuid
+from cdk_lambda_layer_builder import BuildPyLayerAsset
 
 
 # Module environment variables
@@ -48,29 +47,29 @@ class SelectablePdfStack(Stack):
 
         # bucket for the original PDF. They might not be searchable, i.e. they 
         # are not made of characters, just images (e.g. scanned documents)
-        doc_bucket = aws_s3.Bucket(
+        self.doc_bucket = aws_s3.Bucket(
             self,
             id='InputDocuments',
             removal_policy=RemovalPolicy.DESTROY, #kept if not empty
         )
         doc_bucket_r_policy = aws_iam.Policy(self, 'DocBucketRead',
             statements=[aws_iam.PolicyStatement(actions=['s3:GetObject'],
-            resources=[doc_bucket.bucket_arn+'/*'])]
+            resources=[self.doc_bucket.bucket_arn+'/*'])]
         )
 
-        processed_bucket = aws_s3.Bucket(
+        self.processed_bucket = aws_s3.Bucket(
             self,
             id='ProcessedDocuments',
             removal_policy=RemovalPolicy.DESTROY, #kept if not empty
         )
         processed_bucket_rw_policy = aws_iam.Policy(self, 'ProcessedBucketReadWrite',
             statements=[aws_iam.PolicyStatement(actions=['s3:GetObject','s3:PutObject'],
-            resources=[processed_bucket.bucket_arn+'/*'])]
+            resources=[self.processed_bucket.bucket_arn+'/*'])]
         )
 
         # create the DynamoDB tables. We create N tables:
         # 1. A table to store the info about documents processing
-        ddb_documents_table = aws_dynamodb.Table(
+        self.ddb_documents_table = aws_dynamodb.Table(
             self,
             id='Documents',
             partition_key=aws_dynamodb.Attribute(
@@ -84,7 +83,7 @@ class SelectablePdfStack(Stack):
         ddb_documents_table_policy = aws_iam.Policy(self,f'DdbDocTablePolicy',
             statements=[aws_iam.PolicyStatement(
                 actions=['dynamodb:PutItem','dynamodb:UpdateItem','dynamodb:UpdateTable', 'dynamodb:DescribeTable'],
-                resources=[ddb_documents_table.table_arn]
+                resources=[self.ddb_documents_table.table_arn]
             )]
         )
 
@@ -109,17 +108,31 @@ class SelectablePdfStack(Stack):
         )
 
         # Create the lambda layers
+        textracttools_layer_asset = BuildPyLayerAsset.from_modules(self, 'TextractToolsLayerAsset',
+            local_module_dirs=[str(LIB_DIRPATH.joinpath('textracttools'))],
+            py_runtime=aws_lambda.Runtime.PYTHON_3_8,
+        )
         textracttools_layer = aws_lambda.LayerVersion(
             self,
             id='TextractTools',
-            code=aws_lambda.Code.from_asset(self.build_textracttools_layer()),
+            code=aws_lambda.Code.from_bucket(
+                textracttools_layer_asset.asset_bucket,
+                textracttools_layer_asset.asset_key
+            ),
             compatible_runtimes=[aws_lambda.Runtime.PYTHON_3_8],
             description ='TextractTools python module'
+        )
+        helpertools_layer_asset = BuildPyLayerAsset.from_modules(self, 'HelpertoolsLayerAsset',
+            local_module_dirs=[str(LIB_DIRPATH.joinpath('helpertools'))],
+            py_runtime=aws_lambda.Runtime.PYTHON_3_8,
         )
         helpertools_layer = aws_lambda.LayerVersion(
             self,
             id='HelperTools',
-            code=aws_lambda.Code.from_asset(self.build_helpertools_layer()),
+            code=aws_lambda.Code.from_bucket(
+                helpertools_layer_asset.asset_bucket,
+                helpertools_layer_asset.asset_key
+            ),
             compatible_runtimes=[aws_lambda.Runtime.PYTHON_3_8],
             description ='HelperTools and PyMuPdf python modules'
         )
@@ -139,7 +152,7 @@ class SelectablePdfStack(Stack):
                 'LOG_LEVEL': log_level,
                 'SNS_TOPIC_ARN': textract_job_topic.topic_arn,
                 'SNS_ROLE_ARN': sns_publish_role.role_arn,
-                'DDB_DOCUMENTS_TABLE': ddb_documents_table.table_name,
+                'DDB_DOCUMENTS_TABLE': self.ddb_documents_table.table_name,
             },
             retry_attempts=0,
             memory_size=128,  #128MB
@@ -154,7 +167,7 @@ class SelectablePdfStack(Stack):
         # set the trigger: S3 PUT on doc_bucket
         start_textract_lambda.add_event_source(
             source=aws_lambda_event_sources.S3EventSource(
-                bucket=doc_bucket, 
+                bucket=self.doc_bucket, 
                 events=[aws_s3.EventType.OBJECT_CREATED_PUT], 
                 filters=[aws_s3.NotificationKeyFilter(prefix=None, suffix='.pdf')]
             )
@@ -191,8 +204,8 @@ class SelectablePdfStack(Stack):
             environment={
                 'LOG_LEVEL': log_level,
                 'REGION': self.region,
-                'DDB_DOCUMENTS_TABLE': ddb_documents_table.table_name,
-                'TEXTRACT_BUCKET': processed_bucket.bucket_name,
+                'DDB_DOCUMENTS_TABLE': self.ddb_documents_table.table_name,
+                'TEXTRACT_BUCKET': self.processed_bucket.bucket_name,
                 'TEXTRACT_RES_QUEUE_URL': processed_textracted_queue_sqs.queue_url
             },
             retry_attempts=0, 
@@ -225,8 +238,8 @@ class SelectablePdfStack(Stack):
             layers=[textracttools_layer, helpertools_layer],
             timeout=Duration.seconds(lambda_timeout_sec),
             environment={
-                'DDB_DOCUMENTS_TABLE': ddb_documents_table.table_name,
-                'OUTPUT_BUCKET': processed_bucket.bucket_name,
+                'DDB_DOCUMENTS_TABLE': self.ddb_documents_table.table_name,
+                'OUTPUT_BUCKET': self.processed_bucket.bucket_name,
                 'LOG_LEVEL': 'INFO',
                 'ADD_WORD_BBOX': '0',
                 'SHOW_CHARACTER': '0',
@@ -254,79 +267,21 @@ class SelectablePdfStack(Stack):
         CfnOutput(
             self,
             id='DocumentInputBucket',
-            value=doc_bucket.bucket_name,
+            value=self.doc_bucket.bucket_name,
             description='Bucket where to load the PDFs',
             export_name=f'{output_prefix}DocumentInputBucket',
         )
         CfnOutput(
             self,
             id='DocumentOutputBucket',
-            value=processed_bucket.bucket_name,
+            value=self.processed_bucket.bucket_name,
             description='Bucket where the processed PDFs and the intermediary files are stored',
             export_name=f'{output_prefix}DocumentOutputBucket',
         )
         CfnOutput(
             self,
             id='ProcessingLogsDynamoDB',
-            value=ddb_documents_table.table_name,
+            value=self.ddb_documents_table.table_name,
             description='Processing logs',
             export_name=f'{output_prefix}ProcessingLogsDdb',
         )
-
-
-    @staticmethod
-    def build_helpertools_layer() -> str:
-        '''
-        Build the helpertools Python module into a wheel then package it into 
-        a zip-file which can be deploy as a AWS Lambda layer. The layer is build 
-        within a container.
-
-        Usage
-        -----
-        layer_zipfile = self.build_helpertools_layer()
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        layer_zippath
-            Path to the layer zipfile.
-        '''
-        cwd = os.path.abspath(os.getcwd())
-        layerbuilder_dirpath = os.path.join(LAMBDA_LAYER_DIRPATH,'helpertools_py38')
-        os.chdir(layerbuilder_dirpath)
-        subprocess.run(['./createlayer.sh','3.8'], capture_output=True)
-        layer_zippath = os.path.join(layerbuilder_dirpath, 'helpertools.zip')
-        os.chdir(cwd)
-        return layer_zippath
-
-
-    @staticmethod
-    def build_textracttools_layer() -> str:
-        '''
-        Build the textracttools Python module into a wheel then package it into 
-        a zip-file which can be deploy as a AWS Lambda layer. The layer is build 
-        within a container.
-
-        Usage
-        -----
-        layer_zipfile = self.build_textracttools_layer()
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        layer_zippath
-            Path to the layer zipfile.
-        '''
-        cwd = os.path.abspath(os.getcwd())
-        layerbuilder_dirpath = os.path.join(LAMBDA_LAYER_DIRPATH,'textracttools_py38')
-        os.chdir(layerbuilder_dirpath)
-        subprocess.run(['./createlayer.sh','3.8'], capture_output=True)
-        layer_zippath = os.path.join(layerbuilder_dirpath, 'textracttools.zip')
-        os.chdir(cwd)
-        return layer_zippath

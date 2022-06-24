@@ -1,37 +1,35 @@
 import setuptools
 
-cdk_libs_version = '2.18.0'
+requirements = [
+    'aws-cdk-lib',
+    'boto3',
+    'pytest',
+]
 
 with open('README.md') as fp:
     long_description = fp.read()
 
 setuptools.setup(
-    name='selectable_pdf_infra',
-    version='2.0.0',
+    name='cdk_lambda_layer_builder',
+    version='1.0.0',
 
-    description='infrastructure to convert scanned PDF\'s into selectable PDF\'s with AWS',
+    description='cdk constructs to build Python Lambda layer with minimum requirements on the user side',
     long_description=long_description,
     long_description_content_type='text/markdown',
-
     author='Marcel Vonlanthen',
     email='vonlanth@amazon.com',
-
-    package_dir={'': 'selectable_pdf_infra'},
-    packages=setuptools.find_packages(where='selectable_pdf_infra'),
-
-    install_requires=[
-        f'aws-cdk-lib=={cdk_libs_version}'
-    ],
-
+    packages=['cdk_lambda_layer_builder'],
+    install_requires=requirements,
     python_requires='>=3.6',
-
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT No Attribution License (MIT-0)',
-        'Programming Language :: JavaScript',
+        'Programming Language :: Python',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Topic :: Software Development :: Code Generators',
         'Topic :: Utilities',
         'Typing :: Typed',
