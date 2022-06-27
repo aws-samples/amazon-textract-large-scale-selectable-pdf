@@ -38,15 +38,17 @@ $ source .venv/bin/activate
 ```
 Always activate virtualenv when working with CDK on this stack.
 
-Once the virtualenv is activated, you can install the required dependencies.
+Once the virtualenv is activated, update pip (the installation setup needs the newest 
+version of pip, so don't forget this step!), then install the package.
 ```
-$ pip install -r requirements.txt
+$ pip install pip --upgrade
+$ pip install .
 ```
 
 You might want to force reinstallation if some changes in `setup.py` are not taken 
 into account during a standard installation
 ```bash
-$ pip install -r requirements.txt --force-reinstall
+$ pip install . --force-reinstall
 ```
 
 ### Useful CDK commands
