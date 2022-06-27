@@ -17,8 +17,7 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     author='Marcel Vonlanthen',
     email='vonlanth@amazon.com',
-    package_dir={'': 'selectable_pdf_infra'},
-    packages=setuptools.find_packages(where='selectable_pdf_infra'),
+    packages=['selectable_pdf_infra'],
     install_requires=[
         'wheel',
         'boto3',
