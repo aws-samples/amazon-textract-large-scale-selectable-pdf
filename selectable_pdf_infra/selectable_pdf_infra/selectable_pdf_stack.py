@@ -39,6 +39,7 @@ class SelectablePdfStack(Stack):
         scope: Construct, 
         construct_id: str,
         log_level: str,
+        add_final_sns: bool=False,
         **kwargs
     ) -> None:
         '''
@@ -224,6 +225,8 @@ class SelectablePdfStack(Stack):
             aws_sns_subscriptions.LambdaSubscription(process_textract_lambda)
         )
 
+        
+
         # Lambda function turning a scanned PDF (i.e. a PDF where we cannot select 
         # text) into a searchable PDF (i.e. a PDF where we can select text). This function 
         # received message from sqs, therefore its timeout MUST be smaller than the 
@@ -260,6 +263,17 @@ class SelectablePdfStack(Stack):
                 batch_size=1,
             )
         )
+
+        # add final SNS topic if required by user
+        if add_final_sns:
+            self.final_sns_topic = aws_sns.Topic(self, 'FinalTopic')
+            selectable_pdf_lambda.add_environment('FINAL_SNS_TOPIC_ARN',self.final_sns_topic.topic_arn)
+            selectable_pdf_lambda.role.attach_inline_policy(
+                 aws_iam.Policy(self, 'FInalTopicWPolicy',
+                    statements=[aws_iam.PolicyStatement(actions=['sns:Publish'],
+                        resources=[self.final_sns_topic.topic_arn])]
+                )
+            )
 
         # stack output
         # output_prefix = 'SelectablePdf'

@@ -59,6 +59,11 @@ def lambda_handler(event, context):
     # Get ddb table
     ddb_doc_table = ProcessingDdbTable(args['ddb_documents_table'])
 
+    # build the final sns topic if required
+    if args['final_sns_topic_arn']:
+        sns_ress = boto3.resource('sns')
+        final_sns_topic = sns_ress.Topic(args['final_sns_topic_arn'])
+
     returns = list()
     for rec in args['records']:
         document_id = rec['document_id']
@@ -100,12 +105,23 @@ def lambda_handler(event, context):
         save_pdf_to_s3(selectable_pdf_doc, args['output_bucket'], output_key)
 
         # prepare return dict
-        returns.append({
-            'selectable_pdf_s3': {
+        ret = {
+            'textract_response_s3': {
                 'bucket': args['output_bucket'],
                 'key': output_key,
+            },
+            'document_name': document_name,
+            'document_id': document_id,
+            'document_s3': {
+                'bucket': rec['original_document_s3']['bucket'],
+                'key': rec['original_document_s3']['key']
             }
-        })
+        }
+        returns.append(ret)
+
+        # send the return dict to SNS
+        if args['final_sns_topic_arn']:
+            final_sns_topic.publish(Message=json.dumps(ret))
 
     # return
     return_dict = {'records': returns}
@@ -141,6 +157,7 @@ def parse_args(event: Dict) -> Dict:
     args['add_word_bbox'] = os.getenv('ADD_WORD_BBOX', default=False)
     args['show_character'] = os.getenv('SHOW_CHARACTER', default=False)
     args['pdf_image_dpi'] = os.getenv('PDF_IMAGE_DPI', default='200')
+    args['final_sns_topic_arn'] = os.getenv('FINAL_SNS_TOPIC_ARN', default=None)
     
 
     # post process some environment variable (Lambda allow only strings)

@@ -22,6 +22,7 @@ infra_stack = SelectablePdfStack(
     construct_id=stack_id, 
     log_level=log_level,
     description=stack_desc,
+    add_final_sns=False,
     env={'region': region},
 )
 
