@@ -25,9 +25,8 @@ from cdk_lambda_layer_builder import BuildPyLayerAsset
 # ----------------------------
 CURRENT_FILEPATH = pathlib.Path(__file__).absolute()
 CURRENT_DIRPATH = CURRENT_FILEPATH.parent.absolute()
-LAMBDA_DIRPATH = CURRENT_DIRPATH.parent.joinpath('lambda')
-LAMBDA_LAYER_DIRPATH = CURRENT_DIRPATH.parent.joinpath('lambda_layer')
-LIB_DIRPATH = CURRENT_DIRPATH.parent.parent.joinpath('lib')
+LAMBDA_DIRPATH = CURRENT_DIRPATH.joinpath('lambda')
+LIB_DIRPATH = CURRENT_DIRPATH.joinpath('lambda_layer')
 
 
 # classes
@@ -38,7 +37,7 @@ class SelectablePdfStack(Stack):
         self, 
         scope: Construct, 
         construct_id: str,
-        log_level: str,
+        log_level: str='INFO',
         add_final_sns: bool=False,
         **kwargs
     ) -> None:

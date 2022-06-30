@@ -106,16 +106,20 @@ def lambda_handler(event, context):
 
         # prepare return dict
         ret = {
+            'document_name': document_name,
+            'document_id': document_id,
             'textract_response_s3': {
+                'bucket': rec['textract_output_s3']['bucket'],
+                'key': rec['textract_output_s3']['key']
+            },
+            'original_document_s3': {
+                'bucket': rec['original_document_s3']['bucket'],
+                'key': rec['original_document_s3']['key']
+            },
+            'processed_document_s3': {
                 'bucket': args['output_bucket'],
                 'key': output_key,
             },
-            'document_name': document_name,
-            'document_id': document_id,
-            'document_s3': {
-                'bucket': rec['original_document_s3']['bucket'],
-                'key': rec['original_document_s3']['key']
-            }
         }
         returns.append(ret)
 

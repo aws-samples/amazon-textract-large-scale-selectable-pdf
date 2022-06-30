@@ -175,8 +175,58 @@ for item in items: #only one item
    print(f"doc name: {item['document_name']}, doc ID: {item['document_id']}")
 ```
 
-
 The Textract output is key for downstream tasks such as Natural Language Processing (NLP).
+
+## Usage as a module
+The main goal of this stack is to convert scanned PDF into selectable PDF. Nevertheless, 
+this is rarely the end goal. These selectable PDF can be used for downstream tasks 
+such as language processing (AI/ML) or indexing for a search engine. You can integrate 
+`amazon-textract-large-scale-selectable-pdf` in your stack as follow:
+1. install `amazon-textract-large-scale-selectable-pdf` in your python environnement 
+   with 
+   ```bash
+   $ pip install "git+https://github.com/aws-samples/amazon-textract-large-scale-selectable-pdf.git#egg=selectable_pdf_infra&subdirectory=selectable_pdf_infra"
+   ```
+2. in your CDK app (e.g. `app.py`), deploy the `amazon-textract-large-scale-selectable-pdf` 
+   stack and reuse its resources with:
+   ```python
+   import aws_cdk as cdk
+   from selectable_pdf_infra.selectable_pdf_stack import SelectablePdfStack
+   from my_downstream_stack import DownstreamStack
+
+   app = cdk.App()
+   ocr_stack = SelectablePdfStack(app, 'ocr-stack', add_final_sns=True)
+   ds_stack = DownstreamStack(app, 'ds-stack',
+      bucket_with_original_pdfs=ocr_stack.doc_bucket,
+      bucket_with_process_pdfs=ocr_stack.processed_bucket,
+      sns_trigger=ocr_stack.final_sns_topic
+   )
+   ```
+   the variable `ocr_stack.final_sns_topic` is an object representing an Amazon SNS topic.
+   The topic is created in `ocr-stack` only if `add_final_sns=True`. The `ocr-stack` 
+   will publish a message in this topic with information about each processed document.
+   Example of message:
+   ```json
+   {
+      "document_name": "SampleInput.pdf",
+      "document_id": "<doc-id>",
+      "textract_response_s3": {
+         "bucket": "",
+         "key": "<doc-id>/"
+      }
+      "processed_document_s3": {
+         "bucket": "<processed_doc_bucket>",
+         "key": "SampleInput.pdf"
+      },
+      
+      "original_document_s3": {
+         "bucket": "<input_doc_bucket>",
+         "key": "SampleInput.pdf"
+      }
+   }
+   ```
+   You can use this sns message by subscribing the SNS topic to one of the resources 
+   in `ds_stack`.
 
 ## Notes
 * Partially based on this (AWS blog post)[https://aws.amazon.com/blogs/machine-learning/generating-searchable-pdfs-from-scanned-documents-automatically-with-amazon-textract/].
