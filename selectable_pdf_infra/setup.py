@@ -63,7 +63,7 @@ setuptools.setup(
         'wheel',
         'boto3',
         f'aws-cdk-lib>=2.8', 
-        f'cdk_lambda_layer_builder @ file://localhost/{str(LIB_DIRPATH.joinpath("cdk-lambda-layer-builder"))}#egg=cdk_lambda_layer_builder'
+        f'cdk_lambda_layer_builder @ git+https://github.com/aws-samples/aws-cdk-lambda-layer-builder.git#egg=cdk_lambda_layer_builder'
     ],
     python_requires='>=3.6',
     classifiers=[
