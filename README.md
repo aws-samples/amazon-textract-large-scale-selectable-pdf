@@ -1,22 +1,22 @@
 # amazon-textract-large-scale-selectable-pdf
 
-This repository contains an application which converts non-selectable or scanned 
-PDF's to selectable PDF's. This application can handle any size of PDF (any number 
-of pages) and can process 100's of PDF in parallel. Moreover, the application uses 
-a serverless architecture, which reduce maintenance and operation costs (e.g. free 
-while not in use).
+This repository contains an application which converts non-selectable PDF's to 
+selectable PDF's. A non-selectable PDF does not allow text selection, meaning the 
+characters are in an image, they are pixels. Scanned document are a good example of 
+non-selectable PDF. In a selectable PDF, the text is made of real characters, i.e. 
+encoded according one of the common standard, such as UTF-8 or ASCI.
 
-A non-selectable PDF does not allow text selection, meaning the characters are 
-images. a selectable PDF allow text selection. Selectable PDF's can be used in 
-several downstream tasks, such as:
-* document search
-* document indexing
-* Machine Learning tasks, such as:
-    * Natural Language Processing (NLP)
-    * NLP annotations
-    * Document summarization
-    * Document classification
-    * Document topic analysis
+There are multitude of applications where a selectable PDF is useful, for example:
+* Document search: a PDF is searchable only if the text is encoded with selectable 
+  text. For example, [Amazon Kendra](https://aws.amazon.com/kendra/) is an intelligent 
+  search service which allows search queries in a large portfolio of documents. For 
+  Kendra to perform as expected, the documents need to be searchable.
+* Document index: document indexing applications, such as 
+  [Amazon CloudSearch](https://aws.amazon.com/cloudsearch/), require the text to 
+  be encoded before the indexing process.
+* Natural Language Processing (NLP): NLP models require encoded text before they 
+  can be trained or used in inference. This application generates the selectable 
+  PDF and also the textract response which can be used in downstream NLP tasks.
 
 ## Architecture
 
@@ -30,89 +30,24 @@ The workflow runs as follow:
    S3 bucket. You can use any folder structure to store the PDFs in the 
    _InputDocument_ bucket: the application is trigger by any uploaded document ending 
    with the `.pdf` extension. An example PDF is available in `examples/SampleInput.pdf`. 
-   As you can see, it's a scanned document, hence the text is neither selectable, 
-   nor searchable. The application will also process PDFs that are already selectable, 
-   therefore you don't need to seprated scanned and original PDFs beforehand.
-2. Each document uploaded to S3 will automatically trigger the _Starttextract_ Amazon
-   Lambda function. This is where the parallel processing of document starts.
-3. Each _Starttextract_ Lambda function triggers an asynchronous Textract job which
-   can last from 1 minute to 30 minutes, depending on the size (i.e. number of pages) 
-   of the document. Each Textract job will write a message in Amazon SNS topic 
-   _TextractJobStatus_ when finished.
-4. Each SNS message triggers the Lambda function _ProcessTextract_ which downloads 
-   the Textract response and saves it to S3. Below, you can find the Textract response 
-   for the sample document in `examples/SampleInput.pdf` (see full response in 
-   `examples/SampleInput_blocks.json`):
-   ```json
-   {
-      "Blocks": [
-         {
-            "BlockType": "PAGE",
-            "Geometry": {
-                  "BoundingBox": { "Width": 1.0, "Height": 1.0, "Left": 0.0, "Top": 0.0},
-                  "Polygon": [...]
-            },
-            "Id": "f8a7ea3f-d3a9-4bdd-8f5c-352c13aa0af4",
-            "Relationships": [
-                  {
-                     "Type": "CHILD",
-                     "Ids": [
-                        "f4e5af39-69a2-449c-ba5c-939e1440297c",
-                        "2a9335b7-93f4-43f2-8c4d-3df8d19530b4",
-                        ...
-                     ]
-                  }
-            ],
-            "Page": 1
-         },
-         {
-            "BlockType": "LINE",
-            "Confidence": 99.76974487304688,
-            "Text": "Employment Application",
-            "Geometry": {
-                  "BoundingBox": { "Width": 0.2864, "Height": 0.0335, "Left": 0.3521, "Top": 0.04381},
-                  "Polygon": [...]
-            },
-            "Id": "f4e5af39-69a2-449c-ba5c-939e1440297c",
-            "Relationships": [
-                  {
-                     "Type": "CHILD",
-                     "Ids": [
-                        "70ee8de2-684e-4377-af5b-c0fa35b7fb53",
-                        "804546c6-9e23-4a58-adc2-8ae40c4ed95c"
-                     ]
-                  }
-            "Page": 1
-         },
-      ]
-   }
-   ```
-   The Textract response is a collection of `blocks`, where each block describes an 
-   element in the PDF, such as a `PAGE`, a `TABLE`, a `LINE`, a `WORD`, etc. Each 
-   block also is located in the PDF by the page number and its bounding box (see 
-   `BoundingBox` key). Each block also describes the content of the block, if possible. 
-   In the example above, the second block is of type `LINE` and its content, i.e. 
-   the content of the line, is `Employment Application` (see the `Text` key). More 
-   information about the Textract response can be found in th5 
-   [Amazon Textract documentation](https://docs.aws.amazon.com/textract/latest/dg/how-it-works-document-layout.html). Once the Lambda function _ProcessTextract_ is done, it publishes a message 
-   in the Amazon SQS queue _ProcessedTextractQueue_.
-5. Each message in SQS queue triggers the Lambda function _SelectablePDF_ which takes 
-   as argument the input PDF and its textract response. The function rasterizes each 
-   page of the PDF and overlay transparent characters over each page. These characters 
-   are selectable and don't interfere with the PDF visuals as they are transparent. The 
-   pages are rasterized to avoid the "double character" overlay problem if the original 
-   PDF already contains selectable text. To place the transparent characters at the right 
-   position on the pages, the Lambda function _SelectablePDF_ uses the bounding boxes 
-   defined for each `WORD` blocks in the Textract response. The font size of the transparent 
-   characters is optimized to improve the overlay. The document `examples/SampleOutput.pdf` is the processed version of `examples/SampleInput.pdf`.
+2. Each document uploaded will automatically trigger the _Starttextract_ Amazon
+   Lambda function which triggers an asynchronous Textract job. Once the job has 
+   completed, the Textract writes a message in the Amazon SNS topic _TextractJobStatus_.
+3. Each SNS message triggers the Lambda function _ProcessTextract_ which downloads 
+   the Textract response and saves it to S3.  More information about the Textract 
+   response can be found in the [Amazon Textract documentation](https://docs.aws.amazon.com/textract/latest/dg/how-it-works-document-layout.html).
+4. The Lambda function _SelectablePDF_ is the last and key step of the application. 
+   It takes as argument the input PDF and its textract response. The function rasterizes 
+   each page of the PDF (i.e. convert the pages to an image) and overlays transparent characters over rasterized characters. These overlaid characters are selectable 
+   and don't interfere with the PDF visuals as they are transparent. The pages are 
+   rasterized to avoid the "double character" problem if the original PDF already 
+   contains selectable text. An example of input and output can be found in the 
+   `examples` folder.
+5. The final SNS topic can be activate and use to feed to downstream tasks. See section
+    __Usage as a module__ for more information.
 
 The Application Logging Layer uses DynamoDB to log the status of each file uploaded 
-_InputDocuments_ S3 bucket. These logs are stored in the _Documents_ table. The code 
-logs (e.g. the Lambda function logs) are stored in CloudWatch, as usual.
-
-This architecture can easily be integrated to a more complex document processing 
-infrastructure,such as the [amazon-textract-serverless-large-scale-document-processing](https://github.com/aws-samples/amazon-textract-serverless-large-scale-document-processing) reference 
-architecture.
+_InputDocuments_ S3 bucket. These logs are stored in the _Documents_ table.
 
 ## Installation
 
@@ -126,10 +61,10 @@ and its infrastructure.
    ```bash
    aws s3 cp examples/SampleInput.pdf s3://<InputDocuments>
    ```
-2. Wait from 1 minute to 30 minutes (depending on the size of the PDF's), then you 
-   can find the selectable version of the input PDF's in the S3 bucket 
-   _ProcessedDocuments_. The processed document will have the same name than the input 
-   document. You can fetch it with:
+2. Wait from 1 minute to 30 minutes (depending on the size of the PDF), then you 
+   can find the selectable version of the PDF in the _ProcessedDocuments_ S3 bucket. 
+   The processed document will have the same name than the input document. You can 
+   fetch it via the Amazon UI or with:
    ```bash
    aws s3 cp s3://<ProcessedDocuments>/SampleInput.pdf  examples/SampleInput_selectable.pdf 
    ```
@@ -202,10 +137,10 @@ such as language processing (AI/ML) or indexing for a search engine. You can int
       sns_trigger=ocr_stack.final_sns_topic
    )
    ```
-   the variable `ocr_stack.final_sns_topic` is an object representing an Amazon SNS topic.
-   The topic is created in `ocr-stack` only if `add_final_sns=True`. The `ocr-stack` 
-   will publish a message in this topic with information about each processed document.
-   Example of message:
+   the variable `ocr_stack.final_sns_topic` represents an Amazon SNS topic.
+   The topic is created by `ocr_stack` only if `add_final_sns=True`. The `ocr_stack` 
+   will publish a message in this topic with information about each processed 
+   document. Example of message:
    ```json
    {
       "document_name": "SampleInput.pdf",
